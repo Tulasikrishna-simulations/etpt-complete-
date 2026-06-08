@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETPT 2026 · Blind Perception Research Program · S R Tulasi Krishna</title>
+<meta name="description" content="A research program to give blind humans a new perceptual category through threshold-clearing haptic systems. The intraspecies case of Evolutionary Technology Path Theory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700&family=JetBrains+Mono:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d10;
+    --bg-panel: #14181d;
+    --bg-deep: #06080a;
+    --line: #1f262e;
+    --line-bright: #2a3340;
+    --text: #d8d4cc;
+    --text-dim: #8a8579;
+    --text-faint: #4d4a44;
+    --amber: #e8a857;
+    --amber-bright: #f5c878;
+    --cyan: #4dd0e1;
+    --cyan-bright: #80e8f5;
+    --red: #d96565;
+    --display: 'Fraunces', serif;
+    --mono: 'JetBrains Mono', monospace;
+    --prose: 'Lora', Georgia, serif;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--prose);
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+  
+  body {
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(232, 168, 87, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(77, 208, 225, 0.04) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+  
+  /* Reusable layout */
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  
+  .container-wide {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  
+  /* Navigation */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(11, 13, 16, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+    z-index: 100;
+  }
+  
+  nav .inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  
+  nav .wordmark {
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  
+  nav .wordmark span {
+    color: var(--amber);
+  }
+  
+  nav .links {
+    display: flex;
+    gap: 24px;
+  }
+  
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.05em;
+  }
+  
+  nav a:hover { color: var(--amber); }
+  
+  @media (max-width: 700px) {
+    nav .links { display: none; }
+  }
+  
+  /* Hero */
+  .hero {
+    padding: 120px 0 80px;
+    position: relative;
+  }
+  
+  .hero .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 28px;
+  }
+  
+  .hero .meta .iter {
+    color: var(--amber);
+  }
+  
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 64px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+    color: var(--text);
+    max-width: 850px;
+  }
+  
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 42px; }
+  }
+  
+  .hero h1 em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 400;
+  }
+  
+  .hero .lede {
+    font-family: var(--prose);
+    font-size: 19px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    max-width: 680px;
+    margin-bottom: 40px;
+  }
+  
+  .hero .lede strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  
+  .cta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    transition: all 0.2s;
+    background: rgba(232, 168, 87, 0.04);
+  }
+  
+  .cta:hover {
+    background: rgba(232, 168, 87, 0.12);
+    color: var(--amber-bright);
+  }
+  
+  .cta.primary {
+    background: var(--amber);
+    color: var(--bg);
+  }
+  
+  .cta.primary:hover {
+    background: var(--amber-bright);
+  }
+  
+  .cta-arrow { font-family: var(--display); font-style: italic; font-size: 16px; }
+  
+  /* Section spacing */
+  section {
+    padding: 80px 0;
+    border-top: 1px solid var(--line);
+  }
+  
+  section:first-of-type {
+    border-top: none;
+  }
+  
+  /* Section header */
+  .section-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .section-meta::after {
+    content: '';
+    flex: 1;
+    border-top: 1px dotted var(--line-bright);
+    margin-left: 4px;
+  }
+  
+  section h2 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    color: var(--text);
+    max-width: 720px;
+  }
+  
+  section h2 em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 400;
+  }
+  
+  section h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--amber);
+    margin: 32px 0 14px;
+  }
+  
+  section p {
+    font-family: var(--prose);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 20px;
+    max-width: 680px;
+  }
+  
+  section p.dim {
+    color: var(--text-dim);
+  }
+  
+  section em {
+    color: var(--amber);
+    font-style: italic;
+  }
+  
+  section strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  
+  /* Equation displays */
+  .equation-block {
+    font-family: var(--display);
+    font-size: 22px;
+    color: var(--amber);
+    padding: 28px 32px;
+    background: var(--bg-panel);
+    border-left: 3px solid var(--amber);
+    margin: 24px 0;
+    overflow-x: auto;
+    font-feature-settings: "ss01";
+  }
+  
+  .equation-block em {
+    color: var(--cyan);
+    font-style: italic;
+  }
+  
+  .equation-caption {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+  
+  /* The thesis box */
+  .thesis-box {
+    margin: 40px 0;
+    padding: 36px 40px;
+    background: linear-gradient(135deg, rgba(232, 168, 87, 0.08), rgba(232, 168, 87, 0.02));
+    border: 1px solid var(--amber);
+    border-radius: 0;
+  }
+  
+  .thesis-box .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  
+  .thesis-box .text {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  
+  .thesis-box .text strong {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--amber);
+  }
+  
+  /* Matrix rotation visualization */
+  .matrix-rotation-vis {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 24px;
+    align-items: center;
+    margin: 40px 0;
+    padding: 36px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+  }
+  
+  @media (max-width: 800px) {
+    .matrix-rotation-vis {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .matrix-arrow-wrap { display: none; }
+  }
+  
+  .matrix-vis-cell {
+    text-align: center;
+  }
+  
+  .matrix-vis-cell .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  
+  .matrix-vis-cell svg {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+  }
+  
+  .matrix-vis-cell .stat {
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  
+  .matrix-vis-cell .stat strong {
+    color: var(--amber);
+    font-weight: 500;
+  }
+  
+  .matrix-vis-cell.blind .stat strong {
+    color: var(--cyan);
+  }
+  
+  .matrix-arrow-wrap {
+    text-align: center;
+    color: var(--amber);
+    font-family: var(--display);
+    font-style: italic;
+  }
+  
+  .matrix-arrow-wrap .arrow {
+    font-size: 32px;
+    line-height: 1;
+  }
+  
+  .matrix-arrow-wrap .label {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+  
+  /* Equations grid (six derived) */
+  .equations-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin: 32px 0;
+  }
+  
+  .eq-row {
+    background: var(--bg-panel);
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  @media (max-width: 700px) {
+    .eq-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+  
+  .eq-num {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 36px;
+    color: var(--amber);
+    line-height: 1;
+  }
+  
+  .eq-body .formula {
+    font-family: var(--display);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+    overflow-x: auto;
+  }
+  
+  .eq-body .formula em {
+    color: var(--amber);
+    font-style: italic;
+  }
+  
+  .eq-body .desc {
+    font-family: var(--prose);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  
+  /* Four predictions panel */
+  .predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin: 32px 0;
+  }
+  
+  @media (max-width: 700px) {
+    .predictions-grid { grid-template-columns: 1fr; }
+  }
+  
+  .prediction {
+    background: var(--bg-panel);
+    padding: 28px 30px;
+  }
+  
+  .prediction .num {
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--amber);
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 12px;
+    font-weight: 300;
+  }
+  
+  .prediction h4 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  
+  .prediction p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    max-width: none;
+  }
+  
+  .prediction .evidence {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--cyan);
+    line-height: 1.6;
+    border-top: 1px dotted var(--line-bright);
+    padding-top: 12px;
+  }
+  
+  .prediction .evidence-label {
+    font-size: 9px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  /* Simulator showcase */
+  .simulator-showcase {
+    margin: 40px 0;
+    padding: 48px 48px 56px;
+    border: 1px solid var(--amber);
+    background: linear-gradient(135deg, rgba(232, 168, 87, 0.05) 0%, rgba(77, 208, 225, 0.02) 100%);
+    position: relative;
+  }
+  
+  .simulator-showcase .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  
+  .simulator-showcase h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--text);
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+  
+  .simulator-showcase h3 em {
+    color: var(--amber);
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .simulator-showcase p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+  
+  .simulator-walkthrough {
+    margin: 28px 0;
+    padding: 24px 28px;
+    background: var(--bg-deep);
+    border-left: 2px solid var(--cyan);
+  }
+  
+  .simulator-walkthrough .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 14px;
+  }
+  
+  .simulator-walkthrough ol {
+    margin: 0;
+    padding-left: 20px;
+    list-style: none;
+    counter-reset: walk;
+  }
+  
+  .simulator-walkthrough ol li {
+    counter-increment: walk;
+    font-family: var(--prose);
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.6;
+    position: relative;
+    padding-left: 28px;
+  }
+  
+  .simulator-walkthrough ol li::before {
+    content: counter(walk, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    font-weight: 500;
+  }
+  
+  /* Research program timeline */
+  .timeline {
+    margin: 32px 0;
+    border: 1px solid var(--line);
+  }
+  
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .timeline-row:last-child { border-bottom: none; }
+  
+  @media (max-width: 700px) {
+    .timeline-row { grid-template-columns: 1fr; }
+  }
+  
+  .timeline-period {
+    background: var(--bg-deep);
+    padding: 20px 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--amber);
+    letter-spacing: 0.05em;
+    border-right: 1px solid var(--line);
+  }
+  
+  .timeline-period .phase {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  
+  .timeline-content {
+    padding: 20px 28px;
+    background: var(--bg-panel);
+  }
+  
+  .timeline-content h4 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  
+  .timeline-content p {
+    font-family: var(--prose);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin: 0;
+    max-width: none;
+  }
+  
+  /* What's needed */
+  .ask-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin: 32px 0;
+  }
+  
+  @media (max-width: 800px) {
+    .ask-grid { grid-template-columns: 1fr; }
+  }
+  
+  .ask {
+    background: var(--bg-panel);
+    padding: 28px 30px;
+  }
+  
+  .ask .icon {
+    font-family: var(--display);
+    color: var(--amber);
+    font-size: 26px;
+    line-height: 1;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  
+  .ask h4 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  
+  .ask p {
+    font-family: var(--prose);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin: 0;
+    max-width: none;
+  }
+  
+  /* Partnership labs */
+  .labs {
+    margin: 28px 0;
+  }
+  
+  .lab {
+    padding: 20px 0;
+    border-bottom: 1px dotted var(--line-bright);
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  
+  .lab:last-child { border-bottom: none; }
+  
+  .lab-num {
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--amber);
+    font-size: 22px;
+    line-height: 1;
+  }
+  
+  .lab-name {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  
+  .lab-desc {
+    font-family: var(--prose);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 0;
+  }
+  
+  /* About / honest section */
+  .about-quote {
+    margin: 36px 0;
+    padding: 28px 36px;
+    border-left: 3px solid var(--amber);
+    background: var(--bg-panel);
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  
+  .about-quote .author {
+    display: block;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  /* Iteration note */
+  .iteration-note {
+    margin: 60px 0 30px;
+    padding: 24px 32px;
+    background: var(--bg-panel);
+    border: 1px dashed var(--line-bright);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  
+  .iteration-note strong {
+    color: var(--amber);
+    font-weight: 500;
+  }
+  
+  .iteration-note a {
+    color: var(--amber);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-faint);
+  }
+  
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 60px 0 80px;
+    color: var(--text-faint);
+    background: var(--bg-deep);
+  }
+  
+  footer .inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+  }
+  
+  @media (max-width: 800px) {
+    footer .inner { grid-template-columns: 1fr; }
+  }
+  
+  footer h5 {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  
+  footer p, footer li {
+    font-family: var(--prose);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    list-style: none;
+  }
+  
+  footer a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-faint);
+  }
+  
+  footer a:hover {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+  }
+  
+  footer .cite {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 16px;
+  }
+  
+  /* Animations */
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .hero, section, footer { animation: fade-in-up 0.6s ease-out backwards; }
+  section:nth-of-type(1) { animation-delay: 0.05s; }
+  section:nth-of-type(2) { animation-delay: 0.1s; }
+  
+  /* Inline cite */
+  cite {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  
+  /* Mono inline */
+  code, .mono {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    color: var(--amber);
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="inner">
+    <div class="wordmark">ETPT <span>·</span> 2026</div>
+    <div class="links">
+      <a href="#thesis">Thesis</a>
+      <a href="#framework">Framework</a>
+      <a href="#breakpoint">Break-point</a>
+      <a href="#simulator">Simulator</a>
+      <a href="#program">Program</a>
+      <a href="#partnership">Partner</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="meta">Iteration III <span class="iter">·</span> June 2026 <span class="iter">·</span> S R Tulasi Krishna <span class="iter">·</span> Hospet, Karnataka</div>
+    <h1>A theory of how <em>any</em> mind builds — tested on blind humans, octopuses, and Claude's own vision.</h1>
+    <p class="lede">
+      The brain reclassifies haptic input as spatial perception when information density crosses a critical threshold <code>ρ_c</code>. Most consumer haptic devices operate <strong>100–1000× below threshold</strong> — which is why decades of work produced alerting, not perception. That was iteration II. Iteration III adds the move that makes this a real theory: a <strong>seventh equation</strong> unifying haptic substitution with direct neural interface, a <strong>falsifiable break-point</strong> that says exactly where the theory dies, and a test that runs the framework on a substrate with no biology at all — <strong>Claude's own vision</strong>. If the same law and the same break-point appear in a transformer, this stops being a theory about animal bodies and becomes a theory about information-processing systems as such.
+    </p>
+    <div class="cta-row">
+      <a href="./etpt_simulator.html" class="cta primary">Open the simulator <span class="cta-arrow">→</span></a>
+      <a href="./ETPT_Research_Dossier.md" class="cta">Read the 36-month dossier <span class="cta-arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- THESIS -->
+<section id="thesis">
+  <div class="container">
+    <div class="section-meta">§ 01 <span style="color: var(--text-faint);">·</span> The Proposition</div>
+    <h2>Same biology. <em>Rotated perception.</em> A perceptual category that no human currently has.</h2>
+    
+    <p>
+      Evolutionary Technology Path Theory (ETPT) treats civilizational technology as the outer product of a species' biology and perception — <strong>B ⊗ P</strong>. Two species with different bio-perception tensors build non-overlapping technologies. The mirror rule.
+    </p>
+    
+    <p>
+      Within <em>Homo sapiens</em>, congenitally blind individuals are the intraspecies controlled experiment. They share B — same hands, same opposable thumbs, same cortex architecture — but their P is rotated. The visual columns are zeroed at birth. The tactile column expands through cross-modal cortical reassignment, documented in Sadato (1996), Cohen (1997), Pascual-Leone (2001), and Amedi (2003). Their visual cortex, occupying roughly <strong>30% of cortical surface</strong>, is plastically available for recruitment into other modalities.
+    </p>
+    
+    <div class="thesis-box">
+      <div class="label">The proposition, in one paragraph</div>
+      <div class="text">
+        Build haptic hardware that crosses the reclassification threshold <strong>ρ_c</strong>. Place it on cortex that has been waiting to recruit since birth. The result is not vision restored — vision evolved for a different cortex serving a different body. The result is <strong>a new perceptual category</strong> the world has not had a word for: spatial structure of the external environment, accessed through skin-borne information at sufficient density to trigger cortical reassignment.
+      </div>
+    </div>
+    
+    <p>
+      Daniel Kish, the blind echolocator, has spent decades describing this kind of percept in language that doesn't borrow from vision. Bach-y-Rita's TVSS users in the 1960s reported the perception moving <em>outward</em> — they stopped attending to vibrations on their back and began perceiving the captured scene as being out there, in space. The skin became transparent. The framework predicts this is what happens above <code>ρ_c</code>, and predicts it can be engineered systematically rather than discovered accidentally.
+    </p>
+    
+    <h3>The matrix rotation, visualized</h3>
+    
+    <div class="matrix-rotation-vis">
+      <div class="matrix-vis-cell">
+        <div class="label">Sighted human · B ⊗ P</div>
+        <!-- Sighted matrix SVG -->
+        <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- Column headers -->
+          <g font-family="JetBrains Mono" font-size="8" fill="#8a8579">
+            <text x="50" y="18" text-anchor="middle">vis_EM</text>
+            <text x="82" y="18" text-anchor="middle">FOV</text>
+            <text x="114" y="18" text-anchor="middle">acst</text>
+            <text x="146" y="18" text-anchor="middle" fill="#4dd0e1">tact</text>
+            <text x="178" y="18" text-anchor="middle">magn</text>
+            <text x="210" y="18" text-anchor="middle">olfc</text>
+            <text x="242" y="18" text-anchor="middle">baro</text>
+            <text x="274" y="18" text-anchor="middle">elec</text>
+          </g>
+          <!-- Row labels and cells -->
+          <g font-family="JetBrains Mono" font-size="8" fill="#8a8579">
+            <text x="30" y="40" text-anchor="end">manl</text>
+            <text x="30" y="62" text-anchor="end">bipd</text>
+            <text x="30" y="84" text-anchor="end">vocl</text>
+            <text x="30" y="106" text-anchor="end">strg</text>
+            <text x="30" y="128" text-anchor="end">finm</text>
+            <text x="30" y="150" text-anchor="end">grip</text>
+            <text x="30" y="172" text-anchor="end">aero</text>
+            <text x="30" y="194" text-anchor="end">aqua</text>
+            <text x="30" y="216" text-anchor="end">coll</text>
+          </g>
+          <!-- Cells: B*P values for sighted human, scaled to color -->
+          <!-- B = [.95,.90,.40,.25,.98,.85,.00,.10,.30]
+               P = [.0004,.33,.067,.85,.01,.05,.30,.00] -->
+          <g id="sighted-cells"></g>
+        </svg>
+        <div class="stat">
+          ‖M‖ = 1.86  ·  max = <strong>0.833</strong> at (fine_motor × tactile)
+        </div>
+      </div>
+      
+      <div class="matrix-arrow-wrap">
+        <div class="arrow">⟶</div>
+        <div class="label">P rotation</div>
+      </div>
+      
+      <div class="matrix-vis-cell blind">
+        <div class="label">Blind human · B ⊗ P</div>
+        <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+          <g font-family="JetBrains Mono" font-size="8" fill="#8a8579">
+            <text x="50" y="18" text-anchor="middle" fill="#d96565">vis_EM</text>
+            <text x="82" y="18" text-anchor="middle" fill="#d96565">FOV</text>
+            <text x="114" y="18" text-anchor="middle">acst</text>
+            <text x="146" y="18" text-anchor="middle" fill="#4dd0e1">tact</text>
+            <text x="178" y="18" text-anchor="middle">magn</text>
+            <text x="210" y="18" text-anchor="middle">olfc</text>
+            <text x="242" y="18" text-anchor="middle">baro</text>
+            <text x="274" y="18" text-anchor="middle">elec</text>
+          </g>
+          <g font-family="JetBrains Mono" font-size="8" fill="#8a8579">
+            <text x="30" y="40" text-anchor="end">manl</text>
+            <text x="30" y="62" text-anchor="end">bipd</text>
+            <text x="30" y="84" text-anchor="end">vocl</text>
+            <text x="30" y="106" text-anchor="end">strg</text>
+            <text x="30" y="128" text-anchor="end">finm</text>
+            <text x="30" y="150" text-anchor="end">grip</text>
+            <text x="30" y="172" text-anchor="end">aero</text>
+            <text x="30" y="194" text-anchor="end">aqua</text>
+            <text x="30" y="216" text-anchor="end">coll</text>
+          </g>
+          <g id="blind-cells"></g>
+        </svg>
+        <div class="stat">
+          ‖M‖ = 1.95  ·  max = <strong>0.931</strong> at (fine_motor × tactile)
+        </div>
+      </div>
+    </div>
+    
+    <p class="dim" style="text-align: center; max-width: none; font-size: 13px; margin-top: -16px;">
+      <em>Same B vector.</em> Visual columns (red headers) closed.  Tactile column (cyan) elevated by ~12%. The whole technological possibility space rotates without changing the underlying body.
+    </p>
+  </div>
+</section>
+
+<!-- FRAMEWORK -->
+<section id="framework">
+  <div class="container">
+    <div class="section-meta">§ 02 <span style="color: var(--text-faint);">·</span> Mathematical Framework</div>
+    <h2>The Mirror Rule, formalized — and <em>seven derived equations</em> covering its dynamics and its boundary.</h2>
+    
+    <p>
+      The framework's central equation separates technology direction from technology intensity. Direction is structurally determined by the bio-perception tensor; intensity follows a saturating function of survival pressure. Direction and intensity decouple — most prior theories collapse them and lose predictive power.
+    </p>
+    
+    <div class="equation-block">
+      T<sub>path</sub>  =  (B ⊗ P) · D · (1 − <em>e</em><sup>−αS</sup>)
+    </div>
+    <div class="equation-caption">The Mirror Rule  ·  T_path is a trajectory in technology space, indexed by survival pressure S and ecological density D</div>
+    
+    <p>
+      The original ODE — derived by hand in Hospet, 2024, before any digital version existed — produces the saturation term <code>1 − e^(−αS)</code> from the observation that technological growth slows as a civilization approaches its biological ceiling. The 2024 portfolio shows that derivation. The 2026 work extends it.
+    </p>
+    
+    <h3>Seven derived equations</h3>
+    
+    <p>
+      Each follows the original derivation standard: an observation, an ODE or first-principles argument, a closed-form solution, boundary conditions, dimensional consistency, what falsifies it. The seventh, added in iteration III, contains the other six as a limiting case.
+    </p>
+    
+    <div class="equations-list">
+      <div class="eq-row">
+        <div class="eq-num">01</div>
+        <div class="eq-body">
+          <div class="formula">d<em>P</em>/dt = β · (ρ − ρ<sub>c</sub>)<sub>+</sub> · (P<sub>max</sub> − <em>P</em>) · <em>f</em></div>
+          <div class="desc">Cortical reassignment dynamics. The rectified (·)<sub>+</sub> term implements the <strong>subthreshold lock</strong>: below ρ_c, dP/dt = 0 and P never grows, regardless of training duration. Above threshold, exponential approach to saturation with timescale τ = 1/[β(ρ−ρ_c)f]. This is the equation that explains 50 years of haptic substitution training results.</div>
+        </div>
+      </div>
+      
+      <div class="eq-row">
+        <div class="eq-num">02</div>
+        <div class="eq-body">
+          <div class="formula">ρ<sub>c</sub> = C<sub>v</sub> / [<em>A</em> · <em>R</em> · log<sub>2</sub>(1 + SNR)]</div>
+          <div class="desc">Reclassification threshold from Shannon channel capacity. Central estimate <strong>ρ_c ≈ 10⁵ bits/cm²/s</strong>; range under parameter uncertainty 30–1500 nodes/cm². This is the framework's most actionable engineering claim — it specifies what haptic hardware has to clear to trigger cortical reassignment, and explains why BrainPort (above) works and Neosensory Buzz (1000× below) does not.</div>
+        </div>
+      </div>
+      
+      <div class="eq-row">
+        <div class="eq-num">03</div>
+        <div class="eq-body">
+          <div class="formula"><em>A</em>(i,j) = c<sub>ij</sub> · σ(k(B<sub>i</sub>P<sub>j</sub> − θ))</div>
+          <div class="desc">Technology accessibility function with sigmoidal threshold and symbolic-encoding-rate modulation c<sub>ij</sub>. Resolves the historical-emergence-order puzzle: human civilization is visual-symbolic dominant despite the tactile column being structurally larger, because visual cortex's c_visual ≈ 1.0 while c_tactile ≈ 0.10. Predicts haptic-symbolic technology is the largest under-exploited region of human B⊗P.</div>
+        </div>
+      </div>
+      
+      <div class="eq-row">
+        <div class="eq-num">04</div>
+        <div class="eq-body">
+          <div class="formula"><em>I</em>(C<sub>1</sub>, C<sub>2</sub>) = ⟨vec(B<sub>1</sub>⊗P<sub>1</sub>), vec(B<sub>2</sub>⊗P<sub>2</sub>)⟩ / (‖·‖ ‖·‖)</div>
+          <div class="desc">Inter-civilization intelligibility as cosine similarity over flattened tensors. Computed: <strong>I(Human, Octopus) = 0.74</strong> (highest non-conspecific value — shared dominance on the tactile column). I(Human, Bat) = 0.21. I(Human, Ant) = 0.23. SETI implication: most alien biology produces signals below mutual intelligibility threshold.</div>
+        </div>
+      </div>
+      
+      <div class="eq-row">
+        <div class="eq-num">05</div>
+        <div class="eq-body">
+          <div class="formula"><em>T</em>(t) = T<sub>max</sub> − (T<sub>max</sub> − T<sub>pre</sub>) <em>e</em><sup>−γαS<sub>shock</sub>t</sup></div>
+          <div class="desc">Comfort-trap recovery dynamics under step-function pressure shock. Critical α below which recovery within a biologically relevant timescale is impossible. Extension to decoupled (T<sub>bio</sub>, T<sub>inst</sub>) captures the modern human regime: institutional capacity persists past biological capability decay.</div>
+        </div>
+      </div>
+      
+      <div class="eq-row">
+        <div class="eq-num">06</div>
+        <div class="eq-body">
+          <div class="formula"><em>P</em>(B⊗P | A) ∝ ∏<sub>k</sub> <em>P</em>(A<sub>k</sub> | B⊗P) · <em>P</em>(B⊗P)</div>
+          <div class="desc">Bayesian posterior over inferred biology, given observed artifact features. Reverse-inference formalization. Computed via HMC/NUTS in the 17-D (B, P) parameter space. Worked example on termite-mound features recovers (collective × chemical × tactile × barometric) signature with tight credible intervals.</div>
+        </div>
+      </div>
+      
+      <div class="eq-row">
+        <div class="eq-num">07</div>
+        <div class="eq-body">
+          <div class="formula">P<sub>eff,j</sub>(t) = P<sub>native,j</sub> + [P<sub>max,j</sub> − P<sub>native,j</sub>] · Φ · λ(t) · η<sub>j</sub></div>
+          <div class="desc"><strong>The dual-pathway equation (iteration III).</strong> Unifies two routes to drive a perceptual representation: the native sensory channel (bounded by B⊗P, pays the ρ_c tax, durable) and direct neural interface (unbounded by B⊗P, pays no tax, but degrades — λ(t) is interface longevity). The original six equations are the λ→0 boundary of this one. Predicts the scaffold result: injection bootstraps native consolidation, then can be withdrawn while the percept persists. The η_j term isolates the deepest open question — can a dimension with no native cortical substrate be written at all?</div>
+        </div>
+      </div>
+    </div>
+    
+    <p style="margin-top: 28px;">
+      Full derivations, dimensional checks, and validation/falsification conditions for each equation are in the <a href="./ETPT_Complete.md" style="color: var(--amber); border-bottom: 1px dashed var(--text-faint);">framework paper</a> — 20,500 words, ready for arXiv submission.
+    </p>
+  </div>
+</section>
+
+<!-- SIMULATOR -->
+<section id="simulator">
+  <div class="container">
+    <div class="section-meta">§ 03 <span style="color: var(--text-faint);">·</span> Working Demonstration</div>
+    <h2>The framework, <em>running live</em> in your browser.</h2>
+    
+    <p>
+      Single-file interactive simulator. Five preset device configurations (Neosensory Buzz, TVSS, BrainPort, VoxeLite-class, ETPT proposed target) load instantly. All six equations operate live. The verdict text updates from "subthreshold lock" through "recruitment in progress" to "a new sense has emerged" as conditions cross threshold and training accumulates.
+    </p>
+    
+    <p class="dim">
+      In iteration III's terms, the simulator demonstrates the <strong>native pathway</strong> — the λ→0 boundary of Equation 7, where there is no neural interface and perception is built entirely through the haptic channel against the ρ_c tax. It's the non-invasive, durable, tractable end of the dual-pathway spectrum.
+    </p>
+    
+    <div class="simulator-showcase">
+      <div class="badge">Recommended walkthrough</div>
+      <h3>Three minutes from skeptical to convinced — or skeptical to falsified.</h3>
+      <p>
+        The point of the simulator is not to look impressive. It is to make the framework's central claim — the threshold structure of Equation 1 — visceral in a way that text and equations alone cannot.
+      </p>
+      
+      <div class="simulator-walkthrough">
+        <div class="label">Try this sequence</div>
+        <ol>
+          <li>Click <strong>"Neosensory Buzz"</strong> preset. Set subject to congenitally blind. Press <code>SPACE</code> to auto-advance training. Watch P(t) stay flat at baseline for all 200 simulated hours. This is the subthreshold lock — no perception ever emerges, no matter how much training.</li>
+          <li>Switch to <strong>"ETPT proposed target"</strong> preset (default). Press <code>SPACE</code>. Watch P(t) climb. The haptic-array visualization shifts from amber to cyan as the new percept emerges. The phenomenology panel illuminates each stage — from "It buzzes" through "Something is out there" to "I don't know what to call it."</li>
+          <li>Now keep ETPT target hardware, but switch subject to <strong>"sighted blindfolded."</strong> Watch the same hardware fail. Sighted cortex is committed to vision; only ~5% is available for recruitment. The framework is sharp here: this technology is built for blind perception first.</li>
+        </ol>
+      </div>
+      
+      <a href="./etpt_simulator.html" class="cta primary">Open simulator now <span class="cta-arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICTIONS -->
+<section>
+  <div class="container">
+    <div class="section-meta">§ 04 <span style="color: var(--text-faint);">·</span> Convergent Evidence</div>
+    <h2>Four predictions of blind-native technology — <em>already validated</em> by the blind community itself.</h2>
+    
+    <p>
+      The framework predicts that when blind users have design freedom (not constrained to mirror sighted infrastructure), they converge on four technology paradigms matching their elevated P. Each prediction has documented real-world evidence — not from labs, but from the community designing for itself.
+    </p>
+    
+    <div class="predictions-grid">
+      <div class="prediction">
+        <div class="num">01</div>
+        <h4>Dynamic topological interfaces</h4>
+        <p>Computing surfaces that change shape and texture, not flat screens. Information lives in the deformation itself.</p>
+        <div class="evidence">
+          <span class="evidence-label">Evidence in the world</span>
+          BLITAB (2017, 8000-pin tactile tablet) · Graphiti Tactile Display (American Printing House) · Orbit Reader · Optacon (1971). When blind users have design budget, they converge here.
+        </div>
+      </div>
+      
+      <div class="prediction">
+        <div class="num">02</div>
+        <h4>Resonance architecture</h4>
+        <p>Buildings and urban infrastructure encode wayfinding through texture and acoustic patterns. Space is felt and heard, not seen.</p>
+        <div class="evidence">
+          <span class="evidence-label">Evidence in the world</span>
+          Tenji blocks (Seiichi Miyake, 1965 — now international standard) · The Lighthouse for the Blind SF, designed for acoustic navigation · APS audible pedestrian signals.
+        </div>
+      </div>
+      
+      <div class="prediction">
+        <div class="num">03</div>
+        <h4>Tele-haptics</h4>
+        <p>Communication directly through touch over distance. Felt emotion and meaning rather than text or visual icon mediation.</p>
+        <div class="evidence">
+          <span class="evidence-label">Evidence in the world</span>
+          Apple Watch haptic heartbeats (mass-market consumer validation) · Neosensory Buzz · Hong Tan's Purdue HIRL vibrotactile messaging research · Lechelt et al. (2018) blind-user interviews.
+        </div>
+      </div>
+      
+      <div class="prediction">
+        <div class="num">04</div>
+        <h4>Spatial audio matrices</h4>
+        <p>3D positioned sound as the dominant interface for environmental information. Convergent independent development.</p>
+        <div class="evidence">
+          <span class="evidence-label">Evidence in the world</span>
+          Microsoft Soundscape (designed with blind users) · BlindSquare · Sound of Vision (EU FP7) · Daniel Kish's flash sonar — independent reinvention from scratch.
+        </div>
+      </div>
+    </div>
+    
+    <p style="margin-top: 32px;">
+      <strong>Inconsistent cases exist</strong> — most blind people still use screen readers, which are audio translations of visual content. ETPT doesn't dismiss these: they are bridges into sighted-built infrastructure, not native blind technology. The test is what blind users build when given clean-slate design space, and across the four examples above the convergence is striking.
+    </p>
+  </div>
+</section>
+
+<!-- PROGRAM -->
+<!-- BEYOND THE MIRROR RULE — the break-point and cross-substrate test -->
+<section id="breakpoint">
+  <div class="container">
+    <div class="section-meta">§ 4.5 <span style="color: var(--text-faint);">·</span> Beyond the Mirror Rule</div>
+    <h2>A theory worth keeping must say <em>where it breaks.</em> This one breaks at exactly one place.</h2>
+    
+    <p>
+      The Mirror Rule says technology lives in the non-zero support of B⊗P — every technology a mind builds must route through its existing perceptual channels. A theory that claims to hold everywhere explains nothing. So the sharpest question is: where does this one break?
+    </p>
+    
+    <p>
+      <strong>It breaks at exactly one place, and the theory predicts that place.</strong> The only way to violate the Mirror Rule is to not route through the body's channels at all — direct neural interface, writing to cortex while bypassing the senses. Stress-test every other candidate and they all fail to escape: instruments transduce inaccessible signals into channels you already have (a Geiger counter makes radiation audible — within B⊗P). AI routes its outputs through your existing senses (within B⊗P). Genetic engineering of new sense organs moves the matrix rather than bypassing it. Only direct cortical writing escapes the body entirely. The break-point is provably unique — which is what makes it a clean test rather than special pleading.
+    </p>
+    
+    <div class="thesis-box">
+      <div class="label">The falsifiability structure</div>
+      <div class="text">
+        ETPT is <strong>falsified</strong> the moment you find a technology that escapes B⊗P <em>without</em> being direct neural interface. It is <strong>corroborated</strong> every time a technology turns out to live inside B⊗P, or to escape it only through direct injection. You don't prove it with a QED — you prove it the way real theories get proven: by naming precisely how it could die, then watching it survive.
+      </div>
+    </div>
+    
+    <h3>The cross-substrate test — running the theory on Claude's own vision</h3>
+    
+    <p>
+      If ETPT is really about information-processing substrates and not just animal bodies, it should hold for a mind with no biology at all. Human vision and Claude-class vision share an input modality — light, images — processed by maximally different substrates: a foveated, retinotopic, saccadic, evolved visual system versus a parallel-patch vision encoder transduced into a token space built for text. The Mirror Rule predicts: same input, different substrate, <em>different competence profiles, each mirroring its own architecture.</em>
+    </p>
+    
+    <p>
+      Computed via Equation 4 (intelligibility index), the cosine similarity of their architecture-derived competence tensors is <strong>I = 0.876</strong> — high, and honestly so: both systems are shaped by the same visual world, so they overlap heavily on object identification, scene semantics, and gist. The framework earns its keep in the <em>divergence vector</em>:
+    </p>
+    
+    <div class="predictions-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="prediction">
+        <div class="num">↑</div>
+        <h4>Where they agree (shared world)</h4>
+        <p>object identification · scene semantics · global gist · color. High competence-overlap → high predicted agreement. The boring "architecture matters" story predicts this much.</p>
+        <div class="evidence">
+          <span class="evidence-label">overlap (normalized)</span>
+          object_id 1.00 · gist 1.00 · semantics 0.99 · color 0.70
+        </div>
+      </div>
+      <div class="prediction">
+        <div class="num">↓</div>
+        <h4>Where they split (substrate-specific)</h4>
+        <p>motion/temporal (|Δ|=0.85 — Claude has no native temporal stream) · spatial metric (0.55) · counting (0.50) · depth (0.50). Exactly the dimensions that need vision's evolved native structure.</p>
+        <div class="evidence">
+          <span class="evidence-label">divergence</span>
+          motion 0.85 · spatial 0.55 · counting 0.50 · depth 0.50
+        </div>
+      </div>
+    </div>
+    
+    <p>
+      <strong>The ETPT-unique prediction</strong> — the one that beats "architectures differ" — is the <em>geometry</em>, not the direction. The rank-order of human–Claude agreement across a task battery should correlate (Spearman ρ) with the rank-order of the competence-overlap vector. If ρ is high on real data, the tensor formalism predicted the shape of agreement, not just that it exists. If ρ ≈ 0, ETPT added nothing and that's worth knowing too. <strong>This experiment runs today — no lab, no surgery, just a task battery and API calls.</strong> It may be the fastest publishable result in the whole program.
+    </p>
+    
+    <h3>The break-point transfers, too</h3>
+    
+    <p>
+      In humans, the unique break-point is the electrode in cortex. In a transformer, the analog is <strong>activation steering</strong> — writing along directions in the residual stream, bypassing the learned input encoder. Normal image input confirms the Mirror Rule (vision shaped by substrate); injecting representations the model never trained to receive bypasses B⊗P the same way an electrode bypasses the retina. And the η_j question transfers with it: steering along directions the model already represents produces coherent percepts; random directions produce garbage. <strong>That makes a transformer a cheap testbed for the deepest claim in the framework</strong> — whether a representation with no native substrate can be written at all — at a cost of API calls rather than implanted electrodes and years of clinical trials.
+    </p>
+    
+    <p class="dim" style="font-size: 14px;">
+      Honest status: the cross-substrate work is currently post-hoc consistency, not prediction. The B-vector generalization from "biological capability" to "action affordance" is a real theoretical commitment held as provisional. The competence values are architecture-derived priors to be replaced by measurement. None of this is a report of Claude's private internals — it is reasoning about the architecture class, falsifiable against published model behavior.
+    </p>
+  </div>
+</section>
+
+<section id="program">
+  <div class="container">
+    <div class="section-meta">§ 05 <span style="color: var(--text-faint);">·</span> Research Program</div>
+    <h2>A 36-month program. Four specific aims. <em>Three publishable phases.</em></h2>
+    
+    <p>
+      The framework's central prediction is testable today with available hardware. The dossier specifies a phased program in which each phase produces independent publications and provides go/no-go decision points for the next phase.
+    </p>
+    
+    <div class="timeline">
+      <div class="timeline-row">
+        <div class="timeline-period">
+          <div class="phase">Year 1</div>
+          Months 1 – 9
+        </div>
+        <div class="timeline-content">
+          <h4>Aim 1 — Determine ρ_c via QUEST adaptive psychophysics</h4>
+          <p>n = 30 congenitally blind, n = 15 sighted controls. Within-subject 60-trial QUEST procedure on VoxeLite-class haptic array. Primary outcome: posterior estimate of ρ_c per subject, group-level CI. <strong>First publishable result by month 9.</strong> Go/no-go: ρ_c in predicted range [3×10³, 3×10⁵] bits/cm²/s.</p>
+        </div>
+      </div>
+      
+      <div class="timeline-row">
+        <div class="timeline-period">
+          <div class="phase">Year 2</div>
+          Months 13 – 24
+        </div>
+        <div class="timeline-content">
+          <h4>Aim 2 + 3 — fMRI cortical recruitment + phenomenological characterization</h4>
+          <p>fMRI block design (n = 20 from Aim 1 cohort), MRI-compatible haptic delivery, V1 contrast (high-ρ vs matched-energy low-ρ). Parallel: structured phenomenological interviews to characterize the new perceptual category. Bayesian latent-class analysis of percept vocabulary. <strong>Two more publications.</strong></p>
+        </div>
+      </div>
+      
+      <div class="timeline-row">
+        <div class="timeline-period">
+          <div class="phase">Year 3</div>
+          Months 25 – 36
+        </div>
+        <div class="timeline-content">
+          <h4>Aim 4 — Wearable prototype and field trial</h4>
+          <p>Target spec: 300 nodes/cm² haptic array across ≥500 cm² body coverage, depth + LiDAR + IMU sensor stack. 12-subject field trial with 6-month daily use; navigation, reach-grasp, and quality-of-life metrics. <strong>Foundation for clinical trial Phase II.</strong></p>
+        </div>
+      </div>
+    </div>
+    
+    <p style="margin-top: 28px;">
+      Budget over 36 months: $400–600K (modest for biomedical research). Phased funding: Phase 1 ($30–80K), Phase 2 ($150–250K), Phase 3 ($200K+). Each phase produces independent publishable results; failure at any phase yields useful knowledge for the field.
+    </p>
+    
+    <p>
+      <a href="./ETPT_Research_Dossier.md" style="color: var(--amber); border-bottom: 1px dashed var(--text-faint);">Full dossier  ·  3400 words  ·  budget, timeline, risk analysis, partnership targets →</a>
+    </p>
+  </div>
+</section>
+
+<!-- PARTNERSHIP -->
+<section id="partnership">
+  <div class="container">
+    <div class="section-meta">§ 06 <span style="color: var(--text-faint);">·</span> What's Needed</div>
+    <h2>The framework stands. <em>The partnership is what's missing.</em></h2>
+    
+    <p>
+      I'm an independent researcher in Hospet, Karnataka. No laptop, no lab access, no prior peer-reviewed publication, no institutional affiliation. The framework, the simulator, the dossier, and all the code are the credentials. What I'm asking for is the experimental apparatus, the academic credentials needed for funding eligibility, and a small amount of funding to live and work.
+    </p>
+    
+    <div class="ask-grid">
+      <div class="ask">
+        <div class="icon">⌗</div>
+        <h4>Institutional host</h4>
+        <p>A research institution willing to sponsor visiting-researcher or RA status. Required for IRB, funding eligibility, and lab access. The host PI contributes credentials and infrastructure; I contribute theory and execution.</p>
+      </div>
+      
+      <div class="ask">
+        <div class="icon">⊞</div>
+        <h4>Haptics hardware partner</h4>
+        <p>Lab with high-density array capability (≥110 nodes/cm²) or willingness to develop one. Hiraki Lab (Tsukuba), Rogers Group (Northwestern), or Eagleman/Neosensory are the priority targets.</p>
+      </div>
+      
+      <div class="ask">
+        <div class="icon">◐</div>
+        <h4>Phase 1 funding</h4>
+        <p>$30–80K for the first publishable result (Aim 1 ρ_c determination, 6–9 months). Emergent Ventures, Schmidt Sciences, or institutional fellowships are realistic targets at this scale.</p>
+      </div>
+    </div>
+    
+    <h3>Priority partnerships, in order</h3>
+    
+    <div class="labs">
+      <div class="lab">
+        <div class="lab-num">i.</div>
+        <div>
+          <div class="lab-name">Hiraki Lab · University of Tsukuba</div>
+          <p class="lab-desc">Pneumatic pouch hardware is closest to ρ_c-clearing density at scale. The original target host institution; the framework provides exactly the theoretical backbone the lab's hardware needs to be evaluated against.</p>
+        </div>
+      </div>
+      
+      <div class="lab">
+        <div class="lab-num">ii.</div>
+        <div>
+          <div class="lab-name">Rogers Research Group · Northwestern</div>
+          <p class="lab-desc">VoxeLite hardware (44–110 nodes/cm²) is at the predicted threshold. They have hardware; ETPT supplies the theoretical specification of what to build next and why.</p>
+        </div>
+      </div>
+      
+      <div class="lab">
+        <div class="lab-num">iii.</div>
+        <div>
+          <div class="lab-name">Eagleman Lab · Stanford / Neosensory</div>
+          <p class="lab-desc">David Eagleman has written extensively on sensory substitution (<em>Livewired</em>). Neosensory's Buzz operates well below threshold — explaining why it produces alerting rather than perception. The framework gives them the engineering target to cross the gap.</p>
+        </div>
+      </div>
+      
+      <div class="lab">
+        <div class="lab-num">iv.</div>
+        <div>
+          <div class="lab-name">Bensmaia Lab · University of Chicago  ·  Amedi Lab · IDC Herzliya</div>
+          <p class="lab-desc">Somatosensory neural prosthetics and sensory-substitution fMRI expertise. Could host Aim 1 directly or partner on Aim 2 cortical-recruitment measurement.</p>
+        </div>
+      </div>
+    </div>
+    
+    <p style="margin-top: 24px;">
+      If you are reading this as a PI or funder, the test is simple: open the <a href="./etpt_simulator.html" style="color: var(--amber); border-bottom: 1px dashed var(--text-faint);">simulator</a>, set it to "Neosensory Buzz," observe that no amount of training advances the subject's perception (subthreshold lock). Then switch to "ETPT proposed target" and watch the percept emerge over 30 simulated hours. If this prediction is correct, every haptic device currently being sold to blind users is operating in the wrong regime, and the field has been pointing in approximately the right direction with the wrong engineering specs for fifty years. That is what I am proposing to measure.
+    </p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section>
+  <div class="container">
+    <div class="section-meta">§ 07 <span style="color: var(--text-faint);">·</span> Honest Origin</div>
+    <h2>Built without a laptop. <em>The work is the credential.</em></h2>
+    
+    <p>
+      Evolutionary Technology Path Theory was developed during a drop year in Hospet, Karnataka — without a laptop, without institutional affiliation, without lab access. The 2024 framework was derived by hand and lives in handwritten notebook pages. The 2026 formalization is what this site documents: six derived equations, a complete framework paper, the simulator, the 36-month research dossier.
+    </p>
+    
+    <div class="about-quote">
+      "I didn't set out to build something for MIT or for funding. I was in a drop year in Hospet with almost no resources, and this question wouldn't leave me alone — why do different bodies with different senses build completely different kinds of technology? I followed it wherever it went. Two years later I had seven equations, a working simulator, and a falsifiable path to giving blind humans a new perceptual category they've never had. I didn't plan the 'why now.' The work just kept demanding to be finished."
+      <span class="author">S R Tulasi Krishna · June 2026</span>
+    </div>
+    
+    <p>
+      The asymmetry is deliberate. I bring theoretical formalization and computational implementation. The partnership brings experimental apparatus and academic infrastructure. The work is good enough — and the predictions are sharp enough — that the trade is fair.
+    </p>
+    
+    <div class="iteration-note">
+      <strong>The lineage.</strong> This is iteration III. The project's progression is itself the evidence that it's serious — each version is preserved, not overwritten.<br><br>
+      <strong>Iteration I · 2024</strong> — derived by hand in a hostel in Hospet during a drop year, no laptop. The panda origin story, the Comfort Trap, the Mirror Rule, the four archetypes, one hand-derived ODE. Preserved at <a href="https://tulasikrishna-simulations.github.io/etpt-portfolio/">etpt-portfolio</a>.<br><br>
+      <strong>Iteration II · May 2026</strong> — programmed on a PC. Six derived equations, the full framework paper, the interactive blind-perception simulator, the 36-month research dossier. The intraspecies case made concrete.<br><br>
+      <strong>Iteration III · June 2026</strong> — the seventh equation (dual-pathway / direct neural interface), the falsifiable break-point, and the cross-substrate test: running the theory on Claude's own vision to ask whether ETPT is a zoology theory or a theory of information-processing systems as such. This is where it stopped being only about bodies.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="inner">
+    <div>
+      <h5>The Program</h5>
+      <p>Evolutionary Technology Path Theory · Blind Perception Research Program · 2026 iteration.</p>
+      <p class="cite">Cite as: Tulasi Krishna, S R (2026). <em>Evolutionary Technology Path Theory: A Bio-Perceptual Tensor Framework for Civilizational Technological Divergence.</em> Preprint.</p>
+    </div>
+    <div>
+      <h5>Artifacts</h5>
+      <ul>
+        <li><a href="./etpt_simulator.html">Simulator</a></li>
+        <li><a href="./ETPT_Research_Dossier.md">Research dossier</a></li>
+        <li><a href="./ETPT_Complete.md">Framework paper</a></li>
+        <li><a href="./etpt_visualizations.py">Visualization code</a></li>
+        <li><a href="./intelligibility_vision.py">Cross-substrate test (code)</a></li>
+        <li><a href="https://tulasikrishna-simulations.github.io/etpt-portfolio/">Iteration I · 2024</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Contact</h5>
+      <ul>
+        <li>S R Tulasi Krishna</li>
+        <li>Hospet, Karnataka, India</li>
+        <li>2024–2026 · independent research</li>
+        <li><em>Contact via portfolio site →</em></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Render the B⊗P matrix heatmaps as SVG cells
+
+const B_HUMAN   = [0.95, 0.90, 0.40, 0.25, 0.98, 0.85, 0.00, 0.10, 0.30];
+const P_SIGHTED = [0.0004, 0.33, 0.067, 0.85, 0.01, 0.05, 0.30, 0.00];
+const P_BLIND   = [0.00, 0.00, 0.10, 0.95, 0.02, 0.07, 0.32, 0.00];
+
+function renderMatrixCells(svgId, B, P, isBlind) {
+  const g = document.getElementById(svgId);
+  if (!g) return;
+  
+  const startX = 36, startY = 24;
+  const cellW = 32, cellH = 22;
+  
+  // Find max for normalization
+  let maxV = 0;
+  for (let i = 0; i < B.length; i++) {
+    for (let j = 0; j < P.length; j++) {
+      maxV = Math.max(maxV, B[i] * P[j]);
+    }
+  }
+  
+  for (let i = 0; i < B.length; i++) {
+    for (let j = 0; j < P.length; j++) {
+      const v = B[i] * P[j];
+      const norm = maxV > 0 ? v / maxV : 0;
+      let fill;
+      
+      const isVisualCol = (j === 0 || j === 1);
+      const isTactileCol = (j === 3);
+      
+      if (isBlind && isVisualCol) {
+        // Zeroed-out columns in dim red
+        fill = `rgb(${30 + 20 * norm}, ${15 + 5 * norm}, ${15 + 5 * norm})`;
+      } else if (isTactileCol && v > 0.4) {
+        // Dominant tactile column in cyan
+        const r = Math.floor(20 + 60 * norm);
+        const g_ = Math.floor(40 + 168 * norm);
+        const b = Math.floor(60 + 165 * norm);
+        fill = `rgb(${r}, ${g_}, ${b})`;
+      } else {
+        // Amber colormap
+        const r = Math.floor(20 + 212 * norm);
+        const g_ = Math.floor(15 + 153 * norm);
+        const b = Math.floor(10 + 77 * norm);
+        fill = `rgb(${r}, ${g_}, ${b})`;
+      }
+      
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', startX + j * cellW);
+      rect.setAttribute('y', startY + i * cellH);
+      rect.setAttribute('width', cellW - 1);
+      rect.setAttribute('height', cellH - 1);
+      rect.setAttribute('fill', fill);
+      rect.setAttribute('stroke', '#0b0d10');
+      rect.setAttribute('stroke-width', '0.5');
+      g.appendChild(rect);
+    }
+  }
+}
+
+window.addEventListener('load', () => {
+  renderMatrixCells('sighted-cells', B_HUMAN, P_SIGHTED, false);
+  renderMatrixCells('blind-cells', B_HUMAN, P_BLIND, true);
+});
+
+// Smooth scroll for nav links
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', e => {
+    const href = link.getAttribute('href');
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+});
+</script>
+
+</body>
+</html>

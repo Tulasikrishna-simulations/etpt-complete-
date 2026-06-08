@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Different Minds Build Different Worlds — ETPT, told simply</title>
+<meta name="description" content="A theory about why creatures with different bodies and senses build completely different kinds of technology — and what it means for giving blind humans a new sense. Told from the beginning, simply.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg-warm: #f3ede3;
+    --ink: #2b2823;
+    --ink-soft: #544f47;
+    --ink-faint: #8a8377;
+    --line: #e2d9cc;
+    --accent: #b06a3a;
+    --accent-deep: #8a4f29;
+    --cyan: #2a7d8c;
+    --paper-shadow: rgba(80, 60, 40, 0.08);
+    --display: 'Fraunces', serif;
+    --prose: 'Lora', Georgia, serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--prose);
+    font-size: 19px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 28px; }
+
+  /* progress bar */
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+    z-index: 100; transition: width 0.1s ease-out;
+  }
+
+  /* hero */
+  .hero { padding: 16vh 0 10vh; }
+  .hero .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent-deep); margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-family: var(--display); font-weight: 300; font-size: 52px;
+    line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 28px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent-deep); }
+  .hero .sub {
+    font-size: 21px; color: var(--ink-soft); font-style: italic;
+    font-family: var(--display); font-weight: 300;
+  }
+  @media (max-width: 600px) { .hero h1 { font-size: 38px; } }
+
+  /* section rhythm */
+  section { padding: 5vh 0; }
+  .marker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .marker::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  h2 {
+    font-family: var(--display); font-weight: 400; font-size: 33px;
+    line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 24px;
+    color: var(--ink);
+  }
+  h2 em { font-style: italic; color: var(--accent-deep); }
+  p { margin-bottom: 22px; }
+  p strong { font-weight: 600; color: var(--ink); }
+  em { font-style: italic; }
+  .lead-in { font-size: 22px; line-height: 1.7; color: var(--ink); }
+
+  /* analogy block */
+  .analogy {
+    background: var(--bg-warm); border-radius: 4px; padding: 32px 34px;
+    margin: 34px 0; border-left: 3px solid var(--accent);
+    box-shadow: 0 1px 3px var(--paper-shadow);
+  }
+  .analogy .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent-deep); margin-bottom: 14px;
+  }
+  .analogy p:last-child { margin-bottom: 0; }
+  .analogy .punch {
+    font-family: var(--display); font-style: italic; font-size: 20px;
+    color: var(--accent-deep); line-height: 1.5;
+  }
+
+  /* pull quote */
+  .pull {
+    font-family: var(--display); font-weight: 300; font-style: italic;
+    font-size: 28px; line-height: 1.4; color: var(--ink);
+    text-align: center; margin: 6vh 0; padding: 0 8px;
+  }
+  .pull span { color: var(--accent-deep); }
+
+  /* the climb marker — where it gets technical */
+  .climb {
+    text-align: center; margin: 8vh 0 4vh; color: var(--ink-faint);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .climb::before, .climb::after { content: '· · ·'; display: block; color: var(--line); font-size: 16px; margin: 12px 0; letter-spacing: 0.4em; }
+
+  /* equation, gentle */
+  .eq {
+    font-family: var(--display); font-size: 22px; text-align: center;
+    color: var(--accent-deep); margin: 28px 0; padding: 24px;
+    background: var(--bg-warm); border-radius: 4px; line-height: 1.6;
+  }
+  .eq small { display: block; font-family: var(--mono); font-size: 11px;
+    color: var(--ink-faint); margin-top: 12px; letter-spacing: 0.05em; }
+
+  /* personal aside */
+  .aside {
+    font-family: var(--display); font-style: italic; font-weight: 300;
+    font-size: 19px; line-height: 1.6; color: var(--ink-soft);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 28px 0; margin: 5vh 0;
+  }
+
+  /* honesty box */
+  .honest {
+    background: #fdfbf7; border: 1px dashed var(--line); border-radius: 4px;
+    padding: 26px 30px; margin: 34px 0; font-size: 17px; color: var(--ink-soft);
+  }
+  .honest .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;
+  }
+  .honest p:last-child { margin-bottom: 0; }
+
+  /* closing / invite */
+  .close { padding: 8vh 0 4vh; text-align: center; }
+  .close .quote {
+    font-family: var(--display); font-style: italic; font-weight: 300;
+    font-size: 24px; line-height: 1.5; color: var(--ink); margin-bottom: 36px;
+  }
+  .sig { font-family: var(--mono); font-size: 13px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .links { margin: 5vh 0 2vh; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .links a {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.05em;
+    color: var(--accent-deep); text-decoration: none;
+    border-bottom: 1px solid var(--line); padding-bottom: 3px; transition: border-color 0.2s;
+  }
+  .links a:hover { border-color: var(--accent); }
+
+  footer { padding: 5vh 0; text-align: center; font-family: var(--mono);
+    font-size: 11px; color: var(--ink-faint); letter-spacing: 0.05em; border-top: 1px solid var(--line); }
+
+  .fade { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero fade">
+    <div class="eyebrow">Evolutionary Technology Path Theory · told from the beginning</div>
+    <h1>Why do different minds build <em>completely different</em> worlds?</h1>
+    <p class="sub">A theory that starts with a simple question — and ends at a way to give blind people a sense they have never had.</p>
+  </header>
+
+  <!-- 1. THE QUESTION, SIMPLY -->
+  <section class="fade">
+    <p class="lead-in">Here is a question that wouldn't leave me alone.</p>
+    <p>Ants build towering mounds, coordinated entirely by smell. Bats build a world out of echoes — they "see" by listening. Octopuses solve puzzles with eight arms that can taste what they touch. And we — humans — built screens, keyboards, written language, things you look at.</p>
+    <p>Every one of these is a kind of technology. But they barely overlap. An ant would have no use for a screen. We would be lost in a world made of smells. <strong>Why does each kind of creature build such a different kind of world?</strong></p>
+    <p>The usual answer is "because some are smarter than others." I don't think that's it. I think the answer is much simpler, and much stranger.</p>
+  </section>
+
+  <!-- 2. ANALOGY: LOCKSMITH & PIANIST -->
+  <section class="fade">
+    <div class="marker">An everyday picture</div>
+    <h2>Give two people the <em>same</em> tools. They build different things.</h2>
+    <p>Imagine you hand an identical toolbox to a locksmith and to a pianist. Same tools, exactly. The locksmith's hands and trained senses pull certain things out of that box — tension, click, the give of a mechanism. The pianist's hands reach for something else entirely — touch, timing, the weight of a key.</p>
+    <div class="analogy">
+      <div class="tag">The idea underneath</div>
+      <p>They don't build different things because one is smarter. They build different things because they have <em>different bodies and different senses</em> — and a body quietly decides what its owner can even reach for.</p>
+      <p class="punch">What you can build is shaped by what you can do and what you can sense.</p>
+    </div>
+    <p>Now scale that up from two people to entire species. The ant, the bat, the octopus, the human — each is holding the same toolbox the universe offers, and each reaches for a completely different corner of it. Not because of intelligence. Because of <em>bodies and senses.</em></p>
+  </section>
+
+  <!-- 3. ANALOGY: FISH & FIRE -->
+  <section class="fade">
+    <div class="marker">Why it's not about being clever</div>
+    <h2>A fish never invented fire — and it isn't because the fish is <em>stupid.</em></h2>
+    <p>A fish is never going to discover fire. Obviously. But sit with <em>why</em> for a second, because the real reason is the whole point.</p>
+    <p>It's not that the fish isn't smart enough. It's that fire was never <em>reachable</em> from where the fish lives. Underwater, with fins, fire simply isn't a thing the fish's world and body could ever hand it. The fish's possibilities were decided long before any question of cleverness came up.</p>
+    <div class="analogy">
+      <div class="tag">The rule, stated plainly</div>
+      <p class="punch">Every mind builds the technology its body and senses make reachable — and is quietly blind to all the rest.</p>
+    </div>
+    <p>I call this the <strong>Mirror Rule</strong>: a creature's technology mirrors its body and senses. Once you see it, you see it everywhere. And it raises a thrilling possibility — if technology is decided by senses, then <em>changing the senses</em> should change what becomes reachable.</p>
+  </section>
+
+  <div class="pull fade">Which brings me to the people this theory is really <span>for.</span></div>
+
+  <!-- 4. ANALOGY: BLIND, SKIN, THRESHOLD -->
+  <section class="fade">
+    <div class="marker">The part that matters most</div>
+    <h2>What happens when the skin learns to <em>see?</em></h2>
+    <p>For sixty years, people have tried to help blind people perceive the world through touch — little patterns of vibration on the skin, standing in for what the eyes would have caught. Mostly, it hasn't worked the way everyone hoped. The devices end up feeling like a buzz on your back. Useful as an alert. But it never becomes <em>seeing.</em></p>
+    <p>Here is what I think everyone missed. Think about water.</p>
+    <div class="analogy">
+      <div class="tag">Drip versus current</div>
+      <p>A dripping tap and a flowing river are the same substance. But they are not the same <em>thing.</em> A drip is a series of separate events — drop, drop, drop. A current is continuous; it carries you. Somewhere between the two, water stops being "drops" and becomes "flow."</p>
+      <p class="punch">Information through the skin is the same. A trickle feels like buzzing. But past a certain density — enough detail, fast enough — the brain stops feeling "taps" and starts perceiving <em>space.</em></p>
+    </div>
+    <p>There is a threshold. Below it, no amount of practice turns the buzz into sight — the brain just files it under "touch" forever. Above it, something extraordinary happens: the brain reclassifies the signal, and a person begins to perceive the shape of the world out there, through their skin. Not as a metaphor. As a genuine new sense.</p>
+    <p>And blind people are exactly the right people for this — because the part of their brain that <em>would</em> have handled vision has been waiting, unused, plastic, ready to be recruited, since birth. The hardware is there. Nobody has yet fed it information dense enough to wake it up.</p>
+  </section>
+
+  <!-- 5. THE TURN -->
+  <section class="fade">
+    <p class="lead-in">So the goal of all this stops being abstract.</p>
+    <p>It becomes a real, buildable thing: <strong>make a device that crosses that threshold, put it on a brain that's ready, and give a blind person a perceptual category the human race has never had a word for.</strong> Not vision restored — vision was built for eyes. Something new. Spatial structure of the world, felt through the skin, dense enough to become real perception.</p>
+  </section>
+
+  <!-- PERSONAL ASIDE 1 -->
+  <div class="aside fade">
+    I worked all of this out during a year I'd dropped out, in Hospet, a small city in Karnataka, with no laptop for most of it. I'm not telling you that for sympathy. I'm telling you because the question genuinely wouldn't let me sleep, and somewhere along the way it stopped being a project and started being the thing I had to finish.
+  </div>
+
+  <!-- THE CLIMB -->
+  <div class="climb fade">from here, it gets technical</div>
+
+  <!-- 6. TECHNICAL: THE EQUATION -->
+  <section class="fade">
+    <div class="marker">For the reader who wants the machinery</div>
+    <h2>The same idea, written as mathematics.</h2>
+    <p>Everything above can be stated precisely. A mind's technology is the outer product of two vectors — what it can do (<strong>B</strong>, its body/capability) and what it can perceive (<strong>P</strong>, its senses) — scaled by how crowded its environment is (<strong>D</strong>) and how hard survival is pushing (<strong>S</strong>):</p>
+    <div class="eq">
+      T<sub>path</sub> = (B ⊗ P) · D · (1 − e<sup>−αS</sup>)
+      <small>the Mirror Rule — direction set by B⊗P, intensity by survival pressure</small>
+    </div>
+    <p>The matrix <strong>B ⊗ P</strong> is the space of everything a mind could reach. Most cells are zero — unreachable. The fish-and-fire fact is just: fire sits in a zero cell of the fish's matrix. And the blind-perception idea is that you can <em>change</em> P — rotate the matrix — so cells that were dark light up.</p>
+  </section>
+
+  <!-- 7. TECHNICAL: THRESHOLD -->
+  <section class="fade">
+    <div class="marker">The threshold, as a number</div>
+    <h2>Where the drip becomes a current.</h2>
+    <p>The "density threshold" from the water analogy has a value you can derive from information theory — the point at which the cortex has enough bandwidth to build a spatial model rather than registering isolated touches:</p>
+    <div class="eq">
+      ρ<sub>c</sub> ≈ 150 nodes/cm² &nbsp;≡&nbsp; 3×10⁴ bits/cm²/s
+      <small>the reclassification threshold · range 30–1500 nodes/cm²</small>
+    </div>
+    <p>This single number explains fifty years of results. The devices that felt like a buzz (Neosensory, classic skin-vibration systems) sit far <em>below</em> ρ_c — so the brain never reclassifies, no matter how long you train. The one device that produced something like real perception (BrainPort, on the tongue) sits <em>above</em> it. The theory says: build hardware that clears ρ_c, and the new sense should emerge. That is a prediction you can test in a lab, and it is falsifiable — if you cross the threshold and nothing happens, the theory is wrong.</p>
+  </section>
+
+  <!-- 8. TECHNICAL: THE SEVENTH EQUATION + BREAK POINT -->
+  <section class="fade">
+    <div class="marker">Where the theory draws its own limit</div>
+    <h2>A theory worth keeping says <em>where it breaks.</em></h2>
+    <p>The Mirror Rule claims technology always mirrors the body's senses. So I asked: is there any way to escape it? There is exactly one. Stop routing information through the senses at all — write it <em>directly</em> to the brain. A seventh equation unifies the gentle, skin-based path with this direct one:</p>
+    <div class="eq">
+      P<sub>eff,j</sub> = P<sub>native,j</sub> + [P<sub>max,j</sub> − P<sub>native,j</sub>] · Φ · λ(t) · η<sub>j</sub>
+      <small>the dual-pathway equation — the skin-based theory is its λ→0 limit</small>
+    </div>
+    <p>This gives the theory a single, sharp breaking point: it holds for everything routed through the senses, and breaks <em>only</em> at direct neural interface — writing to the brain past the body. Every other candidate (instruments, AI, even adding new sense organs) turns out not to escape. A theory that names the one place it can die is a theory you can actually test, instead of one that quietly explains everything and therefore nothing.</p>
+    <p>And then a strange thing happened. I tried running the whole theory on a mind with no biology at all — a transformer-based vision system, the kind behind modern image-reading AIs. Same input as human eyes (images), utterly different substrate. The theory predicted they'd be strong and weak in different, specific places — and they are: strong at meaning, weak exactly where human vision's evolved machinery lives (motion, exact counting, precise geometry). The same law, and the same breaking point, appeared in a machine. Which suggests this was never really a theory about <em>animals.</em> It might be a theory about minds as such.</p>
+  </section>
+
+  <!-- HONESTY -->
+  <div class="honest fade">
+    <div class="tag">What I don't yet know — said plainly</div>
+    <p>None of this has been tested in a lab yet. Every number is a careful estimate, not a measurement. ρ_c has never been measured directly. The cross-substrate result is consistency, not yet a confirmed prediction. The theory is internally consistent and falsifiable — but it is a program of measurement that has not yet measured. I would rather tell you that honestly than oversell it. The next step is the experiment, and I've written exactly what it would be.</p>
+  </div>
+
+  <!-- PERSONAL ASIDE 2 + CLOSE -->
+  <div class="close fade">
+    <p class="quote">"I didn't set out to build something for a university or for funding. The question wouldn't leave me alone — why do different bodies build completely different kinds of technology? I followed it wherever it went. The work just kept demanding to be finished."</p>
+    <p class="sig">— S R Tulasi Krishna · Hospet, Karnataka · 2024–2026</p>
+
+    <div class="links">
+      <a href="./index.html">Read the rigorous version — full framework, seven equations, the research program →</a>
+      <a href="./etpt_simulator.html">Try the interactive simulator — watch the threshold cross →</a>
+      <a href="./ETPT_Complete.md">The complete paper (~22,000 words) →</a>
+    </div>
+
+    <p style="font-family: var(--prose); font-style: italic; color: var(--ink-soft); font-size: 18px; margin-top: 4vh;">
+      If you study perception, haptics, or the brain — and especially if you have a lab — I would give a great deal for twenty minutes of your time. The theory is built. What it needs now is someone who can help test it.
+    </p>
+  </div>
+
+  <footer>
+    Evolutionary Technology Path Theory · the accessible version · written to be read by anyone, finished by anyone
+  </footer>
+
+</div>
+
+<script>
+  // reading progress
+  const bar = document.getElementById('progress');
+  function onScroll() {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+    bar.style.width = (scrolled * 100) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // fade-in on scroll
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+  // reveal hero immediately
+  document.querySelector('.hero').classList.add('in');
+</script>
+</body>
+</html>

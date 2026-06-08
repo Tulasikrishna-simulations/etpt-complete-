@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETPT — Haptic Perception Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d10;
+    --bg-panel: #14181d;
+    --bg-deep: #06080a;
+    --line: #1f262e;
+    --line-bright: #2a3340;
+    --text: #d8d4cc;
+    --text-dim: #8a8579;
+    --text-faint: #4d4a44;
+    --amber: #e8a857;
+    --amber-bright: #f5c878;
+    --cyan: #4dd0e1;
+    --cyan-bright: #80e8f5;
+    --red: #d96565;
+    --green: #7bc97b;
+    --display: 'Fraunces', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  
+  body {
+    background-image:
+      radial-gradient(ellipse at top, rgba(232, 168, 87, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(77, 208, 225, 0.03) 0%, transparent 40%);
+    padding: 24px;
+  }
+  
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  header h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  
+  header h1 em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 300;
+  }
+  
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  
+  .meta {
+    text-align: right;
+    color: var(--text-dim);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .meta .label { color: var(--text-faint); }
+  .meta .value { color: var(--amber); }
+  
+  /* Preset bar */
+  .presets {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border: 1px solid var(--line);
+    background: var(--bg-panel);
+  }
+  
+  .preset {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--line);
+    text-align: left;
+  }
+  
+  .preset:last-child { border-right: none; }
+  
+  .preset:hover {
+    background: rgba(232, 168, 87, 0.05);
+    color: var(--text);
+  }
+  
+  .preset.active {
+    background: rgba(232, 168, 87, 0.1);
+    color: var(--amber);
+    border-bottom: 2px solid var(--amber);
+  }
+  
+  .preset .name {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .preset .verdict {
+    font-size: 10px;
+    opacity: 0.7;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  
+  /* Main grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  @media (max-width: 1100px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+  
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 18px;
+    position: relative;
+  }
+  
+  .panel-header {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--amber);
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  
+  .panel-header .index {
+    font-family: var(--mono);
+    font-style: normal;
+    color: var(--text-faint);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+  
+  .panel-subtitle {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  
+  /* Canvases */
+  canvas {
+    display: block;
+    width: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+  }
+  
+  /* Environment panel */
+  .env-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  
+  .env-cell {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .env-cell .label {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  
+  /* Controls panel */
+  .controls .control {
+    margin-bottom: 16px;
+  }
+  
+  .control .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  
+  .control .name {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  
+  .control .value {
+    font-size: 13px;
+    color: var(--amber);
+    font-variant-numeric: tabular-nums;
+  }
+  
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--line-bright);
+    outline: none;
+    border-radius: 0;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 16px;
+    background: var(--amber);
+    cursor: pointer;
+    border-radius: 0;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 16px;
+    background: var(--amber);
+    cursor: pointer;
+    border-radius: 0;
+    border: none;
+  }
+  
+  select {
+    width: 100%;
+    background: var(--bg-deep);
+    color: var(--text);
+    border: 1px solid var(--line-bright);
+    padding: 6px 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  /* Status grid */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+  
+  @media (max-width: 800px) {
+    .status-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  
+  .status-cell {
+    background: var(--bg-panel);
+    padding: 16px 18px;
+  }
+  
+  .status-cell .label {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  
+  .status-cell .value {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .status-cell .unit {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+  
+  .status-cell .note {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  
+  .status-cell.active .value { color: var(--amber); }
+  .status-cell.success .value { color: var(--cyan-bright); }
+  .status-cell.success .label { color: var(--cyan); }
+  .status-cell.failure .value { color: var(--red); }
+  .status-cell.failure .label { color: var(--red); }
+  
+  /* Dynamics panel */
+  .dynamics-panel {
+    grid-column: 1 / -1;
+  }
+  
+  /* Verdict */
+  .verdict-box {
+    border: 1px solid var(--line);
+    background: var(--bg-panel);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .verdict-indicator {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.02);
+    flex-shrink: 0;
+  }
+  
+  .verdict-indicator.active { background: var(--amber); box-shadow: 0 0 12px var(--amber); }
+  .verdict-indicator.success { background: var(--cyan); box-shadow: 0 0 16px var(--cyan); }
+  .verdict-indicator.failure { background: var(--red); box-shadow: 0 0 12px var(--red); }
+  
+  .verdict-text {
+    flex: 1;
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  
+  .verdict-text .strong {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--amber);
+  }
+  
+  /* Equations panel */
+  .equations {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 24px 28px;
+    margin-top: 16px;
+  }
+  
+  .equations h2 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--amber);
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .equation {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .equation:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  
+  .equation .formula {
+    font-family: var(--display);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-feature-settings: "ss01";
+  }
+  
+  .equation .formula em { color: var(--amber); font-weight: 400; }
+  
+  .equation .description {
+    color: var(--text-dim);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  
+  /* Footer */
+  footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-faint);
+    font-size: 11px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  footer a {
+    color: var(--amber);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-faint);
+    padding-bottom: 1px;
+  }
+  
+  footer a:hover { color: var(--amber-bright); border-bottom-color: var(--amber); }
+  
+  /* Animations */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+  
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .panel, .status-cell, .verdict-box { animation: fade-in 0.5s ease-out backwards; }
+  .panel:nth-child(1) { animation-delay: 0.05s; }
+  .panel:nth-child(2) { animation-delay: 0.1s; }
+  .panel:nth-child(3) { animation-delay: 0.15s; }
+  
+  /* Custom dotted divider */
+  .divider-dotted {
+    border-top: 1px dotted var(--line-bright);
+    margin: 16px 0;
+  }
+  
+  /* Small */
+  .hint {
+    font-size: 10px;
+    color: var(--text-faint);
+    font-style: italic;
+    margin-top: 8px;
+  }
+  
+  /* Thesis hero */
+  .thesis {
+    border: 1px solid var(--amber);
+    background: linear-gradient(135deg, rgba(232, 168, 87, 0.06), rgba(232, 168, 87, 0.02));
+    padding: 24px 32px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  
+  .thesis-mark {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  
+  .thesis-text {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  
+  .thesis-text em {
+    color: var(--amber);
+    font-style: normal;
+    font-weight: 400;
+  }
+  
+  /* Matrix rotation panel */
+  .matrix-rotation {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  
+  .matrix-rotation h2 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--amber);
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  
+  .matrix-rotation .panel-subtitle {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-bottom: 18px;
+  }
+  
+  .matrix-pair {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  @media (max-width: 800px) {
+    .matrix-pair { grid-template-columns: 1fr; }
+    .matrix-arrow { display: none; }
+  }
+  
+  .matrix-cell-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .matrix-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  
+  .matrix-stats {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-align: center;
+    margin-top: 8px;
+  }
+  
+  .matrix-stats strong {
+    color: var(--cyan);
+    font-weight: 500;
+  }
+  
+  .matrix-arrow {
+    text-align: center;
+    color: var(--amber);
+    font-size: 28px;
+    font-family: var(--display);
+    font-style: italic;
+  }
+  
+  .matrix-arrow .arrow-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  
+  /* Phenomenology */
+  .phenom {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  
+  .phenom h2 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--amber);
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  
+  .phenom .panel-subtitle {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+  
+  .phenom-stages {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  
+  @media (max-width: 900px) {
+    .phenom-stages { grid-template-columns: repeat(2, 1fr); }
+  }
+  
+  .phenom-stage {
+    background: var(--bg-deep);
+    padding: 14px 16px;
+    opacity: 0.35;
+    transition: opacity 0.3s, background 0.3s;
+  }
+  
+  .phenom-stage.current {
+    opacity: 1;
+    background: rgba(232, 168, 87, 0.08);
+    border-left: 3px solid var(--amber);
+  }
+  
+  .phenom-stage.current.success {
+    background: rgba(77, 208, 225, 0.08);
+    border-left: 3px solid var(--cyan);
+  }
+  
+  .phenom-stage-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .phenom-stage.current .phenom-stage-label {
+    color: var(--amber);
+  }
+  
+  .phenom-stage.current.success .phenom-stage-label {
+    color: var(--cyan);
+  }
+  
+  .phenom-stage-text {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+  
+  .phenom-stage.current .phenom-stage-text {
+    color: var(--text);
+  }
+  
+  /* Validation grid — four predictions */
+  .validation {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  
+  .validation h2 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--amber);
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  
+  .validation .panel-subtitle {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-bottom: 18px;
+  }
+  
+  .validation-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  
+  @media (max-width: 1000px) {
+    .validation-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  
+  @media (max-width: 600px) {
+    .validation-grid { grid-template-columns: 1fr; }
+  }
+  
+  .prediction {
+    background: var(--bg-deep);
+    padding: 18px 16px 16px;
+  }
+  
+  .prediction-number {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 32px;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 8px;
+    font-weight: 300;
+  }
+  
+  .prediction-title {
+    font-family: var(--display);
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  
+  .prediction-detail {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  
+  .prediction-evidence {
+    font-size: 10px;
+    color: var(--cyan);
+    border-top: 1px dotted var(--line-bright);
+    padding-top: 8px;
+    line-height: 1.5;
+  }
+  
+  .prediction-evidence-label {
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 9px;
+    margin-bottom: 4px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>ETPT <em>Blind Perception</em> Simulator</h1>
+    <div class="subtitle">A new sense for blind humans, derived from bio-perceptual tensor theory  ·  not vision restoration</div>
+  </div>
+  <div class="meta">
+    <div><span class="label">FRAMEWORK</span> <span class="value">ETPT v2.1</span></div>
+    <div><span class="label">AUTHOR</span> <span class="value">S R Tulasi Krishna</span></div>
+    <div><span class="label">STATUS</span> <span class="value">SIMULATION  ·  PRE-EXPERIMENT</span></div>
+  </div>
+</header>
+
+<!-- Thesis hero -->
+<div class="thesis">
+  <div class="thesis-mark">THE PROPOSITION</div>
+  <div class="thesis-text">
+    Blind humans share <em>B</em> with sighted humans but have a rotated <em>P</em> — visual columns zeroed, tactile column elevated through cross-modal cortical reassignment. The largest cell of the human B⊗P matrix is <em>(fine motor × tactile)</em> at 0.833 — and in blind humans, this cell expands further to 0.931. Build haptic hardware that crosses ρ_c, place it on cortex that has been waiting to recruit, and the result is not vision restored: it is a <em>new perceptual category</em> the world has not had a word for. The blind community's cortex is uniquely ready. This simulator shows the mechanism live.
+  </div>
+</div>
+
+<!-- Preset configurations -->
+<div class="presets">
+  <button class="preset" data-preset="neosensory">
+    <span class="name">Neosensory Buzz</span>
+    <span class="verdict">4 motors / wrist  ·  predicted: alerting only</span>
+  </button>
+  <button class="preset" data-preset="tvss">
+    <span class="name">TVSS (Bach-y-Rita)</span>
+    <span class="verdict">16 nodes/cm² / back  ·  predicted: marginal</span>
+  </button>
+  <button class="preset" data-preset="brainport">
+    <span class="name">BrainPort</span>
+    <span class="verdict">144 nodes/cm² / tongue  ·  predicted: works</span>
+  </button>
+  <button class="preset" data-preset="voxelite">
+    <span class="name">VoxeLite-class</span>
+    <span class="verdict">110 nodes/cm² / forearm  ·  predicted: at threshold</span>
+  </button>
+  <button class="preset active" data-preset="etpt-target">
+    <span class="name">ETPT proposed target</span>
+    <span class="verdict">300 nodes/cm² / back  ·  predicted: strong</span>
+  </button>
+</div>
+
+<!-- Status indicators -->
+<div class="status-grid">
+  <div class="status-cell" id="status-rho">
+    <div class="label">Effective density ρ_eff</div>
+    <div class="value"><span id="val-rho">—</span><span class="unit">bits/cm²/s</span></div>
+    <div class="note" id="note-rho">computing</div>
+  </div>
+  <div class="status-cell" id="status-rhoc">
+    <div class="label">Threshold ρ_c (Eq 2)</div>
+    <div class="value"><span id="val-rhoc">—</span><span class="unit">bits/cm²/s</span></div>
+    <div class="note" id="note-rhoc">from information theory</div>
+  </div>
+  <div class="status-cell" id="status-p">
+    <div class="label">Cortical recruitment P(t)</div>
+    <div class="value"><span id="val-p">—</span><span class="unit">/ 1.0</span></div>
+    <div class="note" id="note-p">via Eq 1 dynamics</div>
+  </div>
+  <div class="status-cell" id="status-q">
+    <div class="label">Perceptual quality</div>
+    <div class="value"><span id="val-q">—</span><span class="unit">%</span></div>
+    <div class="note" id="note-q">spatial-percept probability</div>
+  </div>
+</div>
+
+<!-- Verdict box -->
+<div class="verdict-box">
+  <div class="verdict-indicator" id="verdict-indicator"></div>
+  <div class="verdict-text" id="verdict-text">Initializing simulation…</div>
+</div>
+
+<!-- B⊗P matrix rotation — the intraspecies case -->
+<div class="matrix-rotation">
+  <h2>The matrix rotation  ·  sighted human → blind human</h2>
+  <div class="panel-subtitle">Same biological vector <em>B</em>; perception vector <em>P</em> rotated by cross-modal cortical reassignment. Sadato (1996), Pascual-Leone (2001), Amedi (2003) document the rewiring; ETPT specifies its structure. The visual columns (vis_EM, FOV) close; the tactile column (P₄) expands. ‖M‖ ≈ 1.86 → 1.95.</div>
+  
+  <div class="matrix-pair">
+    <div class="matrix-cell-wrap">
+      <div class="matrix-label">Sighted human B⊗P  ·  9 × 8</div>
+      <canvas id="matrix-sighted" width="380" height="220"></canvas>
+      <div class="matrix-stats">
+        Dominant: <strong>(fine_motor × tactile) = 0.833</strong>  ·  Visual columns active  ·  Symbolic encoding ≈ visual
+      </div>
+    </div>
+    <div class="matrix-arrow">
+      ⟶
+      <span class="arrow-label">P rotation</span>
+    </div>
+    <div class="matrix-cell-wrap">
+      <div class="matrix-label">Blind human B⊗P  ·  9 × 8</div>
+      <canvas id="matrix-blind" width="380" height="220"></canvas>
+      <div class="matrix-stats">
+        Dominant: <strong>(fine_motor × tactile) = 0.931</strong>  ·  Visual columns zeroed  ·  Symbolic encoding ≈ tactile-acoustic
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Phenomenology — what the subject actually experiences -->
+<div class="phenom">
+  <h2>Phenomenology  ·  what the subject experiences right now</h2>
+  <div class="panel-subtitle">The percept is not vision. It is a new perceptual category that emerges as ρ_eff crosses ρ_c and P(t) grows. Daniel Kish (flash sonar) and Bach-y-Rita's TVSS users describe similar transitions in their own words. The vocabulary doesn't exist yet.</div>
+  
+  <div class="phenom-stages">
+    <div class="phenom-stage" id="phenom-1">
+      <div class="phenom-stage-label">Stage 1  ·  subthreshold</div>
+      <div class="phenom-stage-text">"It buzzes. It tickles. I feel the device on my skin but it doesn't mean anything beyond that."</div>
+    </div>
+    <div class="phenom-stage" id="phenom-2">
+      <div class="phenom-stage-label">Stage 2  ·  threshold crossing</div>
+      <div class="phenom-stage-text">"Something is out there. I can't quite name it. Patterns I feel on my back point toward… the room?"</div>
+    </div>
+    <div class="phenom-stage" id="phenom-3">
+      <div class="phenom-stage-label">Stage 3  ·  spatial emergence</div>
+      <div class="phenom-stage-text">"The chair is to my left. There's a wall ahead, three meters. I'm not feeling the device anymore — I'm feeling the room."</div>
+    </div>
+    <div class="phenom-stage" id="phenom-4">
+      <div class="phenom-stage-label">Stage 4  ·  the new sense</div>
+      <div class="phenom-stage-text">"I don't know what to call it. It isn't sight. It isn't touch. The world is just there, in a way that nobody has a word for yet."</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main 4-panel grid -->
+<div class="main-grid">
+  
+  <!-- Environment (top-left, large) -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Environment <span style="font-style: normal; color: var(--text-dim);">·</span> subject in space</span>
+      <span class="index">FIG. 01</span>
+    </div>
+    <div class="panel-subtitle">Top-down view. The subject (◉) moves through a virtual room with obstacles. Forward-facing depth sensor casts rays in a 120° arc.</div>
+    <canvas id="env" width="600" height="320"></canvas>
+    <div class="hint">Hover or drag to reposition the subject. Arrow keys rotate.</div>
+  </div>
+  
+  <!-- Controls (top-right) -->
+  <div class="panel controls">
+    <div class="panel-header">
+      <span>Configuration</span>
+      <span class="index">CTRL</span>
+    </div>
+    <div class="panel-subtitle">Vary parameters; the simulation updates live. Presets above load known device configurations.</div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Spatial density</span><span class="value"><span id="lbl-density">300</span> nodes/cm²</span></div>
+      <input type="range" id="ctl-density" min="1" max="500" value="300">
+    </div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Update rate</span><span class="value"><span id="lbl-update">200</span> Hz</span></div>
+      <input type="range" id="ctl-update" min="10" max="1000" value="200">
+    </div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Force levels (resolution)</span><span class="value"><span id="lbl-levels">16</span> steps</span></div>
+      <input type="range" id="ctl-levels" min="2" max="64" value="16">
+    </div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Coverage area</span><span class="value"><span id="lbl-area">1500</span> cm²</span></div>
+      <input type="range" id="ctl-area" min="1" max="2500" value="1500">
+    </div>
+    
+    <div class="divider-dotted"></div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Subject population</span></div>
+      <select id="ctl-subject">
+        <option value="congenital" selected>Congenital blind  ·  f = 0.95</option>
+        <option value="early">Early blind  ·  f = 0.70</option>
+        <option value="late">Late blind  ·  f = 0.30</option>
+        <option value="sighted">Sighted blindfolded  ·  f = 0.05</option>
+      </select>
+    </div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Training elapsed</span><span class="value"><span id="lbl-time">0.0</span> hr</span></div>
+      <input type="range" id="ctl-time" min="0" max="200" step="0.5" value="0">
+      <div class="hint" id="hint-time">Press <strong>SPACE</strong> to auto-advance training; <strong>R</strong> to reset.</div>
+    </div>
+    
+    <div class="control">
+      <div class="row"><span class="name">Body location</span></div>
+      <select id="ctl-location">
+        <option value="back">Back  ·  high area, low innervation</option>
+        <option value="forearm">Forearm  ·  medium area, medium innervation</option>
+        <option value="palm">Palm  ·  low area, high innervation</option>
+        <option value="tongue">Tongue  ·  tiny area, max innervation</option>
+        <option value="wrist">Wrist  ·  tiny area, sparse coverage</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Sensor view (middle-left) -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Depth sensor <span style="font-style: normal; color: var(--text-dim);">·</span> raw input</span>
+      <span class="index">FIG. 02</span>
+    </div>
+    <div class="panel-subtitle">Forward-facing depth camera. Brighter = closer. This is the sensor stream before haptic transduction.</div>
+    <canvas id="sensor" width="600" height="120"></canvas>
+  </div>
+  
+  <!-- Haptic array view (middle-right) -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Haptic array <span style="font-style: normal; color: var(--text-dim);">·</span> body surface</span>
+      <span class="index">FIG. 03</span>
+    </div>
+    <div class="panel-subtitle">Live haptic field rendered on the chosen body location, at the configured density and update rate.</div>
+    <canvas id="haptic" width="500" height="200"></canvas>
+  </div>
+  
+  <!-- Dynamics (bottom, full-width) -->
+  <div class="panel dynamics-panel">
+    <div class="panel-header">
+      <span>Cortical recruitment dynamics <span style="font-style: normal; color: var(--text-dim);">·</span> P(t) evolution</span>
+      <span class="index">FIG. 04</span>
+    </div>
+    <div class="panel-subtitle">Equation 1: dP/dt = β(ρ − ρ_c)₊(P_max − P)f. Below threshold (red), P stays locked at baseline regardless of training duration. Above threshold (cyan), P grows toward saturation.</div>
+    <canvas id="dynamics" width="1200" height="220"></canvas>
+  </div>
+</div>
+
+<!-- Four predictions of blind civilization technology, with real-world evidence -->
+<div class="validation">
+  <h2>Four predictions of blind-native technology  ·  already converging in the real world</h2>
+  <div class="panel-subtitle">The framework predicts that blind users with design freedom converge on four technology paradigms matching their elevated P. Each prediction has documented evidence from the existing blind community — not from labs, not from researchers, but from the community designing for itself.</div>
+  
+  <div class="validation-grid">
+    <div class="prediction">
+      <div class="prediction-number">01</div>
+      <div class="prediction-title">Dynamic topological interfaces</div>
+      <div class="prediction-detail">Computing surfaces that change shape and texture, not flat screens. The information lives in the deformation of the surface itself.</div>
+      <div class="prediction-evidence">
+        <span class="prediction-evidence-label">Evidence in the world</span>
+        BLITAB (2017, 8000-pin tactile tablet), Graphiti display, Orbit Reader, Optacon (1971). When blind users have design budget, they converge here.
+      </div>
+    </div>
+    
+    <div class="prediction">
+      <div class="prediction-number">02</div>
+      <div class="prediction-title">Resonance architecture</div>
+      <div class="prediction-detail">Buildings and urban infrastructure encode wayfinding through texture and acoustics. Space is felt and heard, not seen.</div>
+      <div class="prediction-evidence">
+        <span class="prediction-evidence-label">Evidence in the world</span>
+        Tenji blocks (Seiichi Miyake, 1965 — now international standard). The Lighthouse for the Blind, SF. APS pedestrian signals.
+      </div>
+    </div>
+    
+    <div class="prediction">
+      <div class="prediction-number">03</div>
+      <div class="prediction-title">Tele-haptics</div>
+      <div class="prediction-detail">Communication directly through touch over distance. Felt emotion and meaning rather than mediated by text or visual icons.</div>
+      <div class="prediction-evidence">
+        <span class="prediction-evidence-label">Evidence in the world</span>
+        Apple Watch haptic heartbeats (mass-market validation). Neosensory Buzz. Purdue HIRL vibrotactile messaging.
+      </div>
+    </div>
+    
+    <div class="prediction">
+      <div class="prediction-number">04</div>
+      <div class="prediction-title">Spatial audio matrices</div>
+      <div class="prediction-detail">3D positioned sound as the dominant interface for environmental information. Convergent independent development by blind users themselves.</div>
+      <div class="prediction-evidence">
+        <span class="prediction-evidence-label">Evidence in the world</span>
+        Microsoft Soundscape (designed with blind users). BlindSquare. Daniel Kish's flash sonar — independent reinvention.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Equations reference -->
+<div class="equations">
+  <h2>Live equations</h2>
+  
+  <div class="equation">
+    <div class="formula">T<sub>path</sub> = (B ⊗ P) · D · (1 − <em>e</em><sup>−αS</sup>)</div>
+    <div class="description">Mirror Rule. Technology direction is determined by the bio-perception tensor; intensity by density and pressure. Direction and intensity decouple.</div>
+  </div>
+  
+  <div class="equation">
+    <div class="formula">dP/dt = β · (ρ − ρ<sub>c</sub>)<sub>+</sub> · (P<sub>max</sub> − P) · <em>f</em></div>
+    <div class="description">Equation 1. Cortical reassignment dynamics. The rectified (·)₊ term implements the subthreshold lock: below ρ_c, dP/dt = 0 and P never grows.</div>
+  </div>
+  
+  <div class="equation">
+    <div class="formula">ρ<sub>c</sub> = C<sub>v</sub> / [<em>A</em> · <em>R</em> · log₂(1 + SNR)]</div>
+    <div class="description">Equation 2. Reclassification threshold derived from Shannon channel capacity. Central estimate ρ_c ≈ 10⁵ bits/cm²/s for typical haptic-cortical parameters.</div>
+  </div>
+  
+  <div class="equation">
+    <div class="formula">Q = σ((ρ<sub>eff</sub> − ρ<sub>c</sub>)/ρ<sub>c</sub>) · P(t) · <em>f</em></div>
+    <div class="description">Derived perceptual quality. Combines threshold proximity, current recruitment, and population plasticity into a single spatial-percept probability metric.</div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <strong style="color: var(--text-dim);">ETPT Simulator</strong>  ·  
+    <a href="#" id="link-paper">paper (arXiv)</a>  ·  
+    <a href="#" id="link-code">source (GitHub)</a>  ·  
+    <a href="https://tulasikrishna-simulations.github.io/etpt-portfolio/">portfolio</a>
+  </div>
+  <div style="color: var(--text-faint);">
+    Cite as: Tulasi Krishna, S R (2026). <em>Evolutionary Technology Path Theory: A Bio-Perceptual Tensor Framework.</em>
+  </div>
+</footer>
+
+<script>
+//
+// ETPT Haptic Perception Simulator — engine
+// 
+// Implements the live simulation of:
+//   - Equation 1 (cortical reassignment ODE) 
+//   - Equation 2 (Shannon-derived reclassification threshold)
+//   - Live depth-sensor → haptic-array transduction
+//   - All four preset device configurations
+//
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  // Configuration (mutable via controls)
+  density: 300,        // nodes/cm²
+  updateRate: 200,     // Hz
+  forceLevels: 16,     // distinguishable amplitude levels
+  area: 1500,          // cm² (body coverage)
+  subject: 'congenital',
+  location: 'back',
+  trainingTime: 0,     // hours elapsed
+  
+  // Derived
+  rhoEff: 0,
+  rhoC: 0,
+  P: 0.3,              // current cortical recruitment value
+  quality: 0,
+  
+  // Subject's plasticity factor f
+  fByPop: { congenital: 0.95, early: 0.70, late: 0.30, sighted: 0.05 },
+  
+  // Plasticity rate constant β (calibrated to give ~30hr saturation
+  // for ρ at 3× threshold in congenital blind)
+  beta: 3e-6,
+  PMax: 1.0,
+  P0: 0.3,
+  
+  // Environment
+  subjectPos: { x: 300, y: 200 },
+  subjectAngle: -Math.PI / 2,  // facing up
+  obstacles: [],
+  rayCount: 48,
+  rayDistances: [],
+  
+  // Recruitment history (for time-series graph)
+  history: [],   // {t, P, rhoEff, rhoC}
+  
+  // Auto-advance training
+  autoAdvancing: false,
+  lastFrameTime: performance.now(),
+};
+
+// ============================================================
+// PRESETS — known device configurations
+// ============================================================
+const PRESETS = {
+  'neosensory': {
+    density: 0.13,      // 4 motors / 30 cm² wrist
+    updateRate: 250,
+    forceLevels: 8,
+    area: 30,
+    location: 'wrist',
+    label: 'Neosensory Buzz',
+  },
+  'tvss': {
+    density: 16,
+    updateRate: 10,
+    forceLevels: 2,
+    area: 100,
+    location: 'back',
+    label: 'TVSS (Bach-y-Rita 1969)',
+  },
+  'brainport': {
+    density: 144,
+    updateRate: 100,
+    forceLevels: 4,
+    area: 1,
+    location: 'tongue',
+    label: 'BrainPort',
+  },
+  'voxelite': {
+    density: 110,
+    updateRate: 200,
+    forceLevels: 8,
+    area: 50,
+    location: 'forearm',
+    label: 'VoxeLite-class',
+  },
+  'etpt-target': {
+    density: 300,
+    updateRate: 200,
+    forceLevels: 16,
+    area: 1500,
+    location: 'back',
+    label: 'ETPT proposed target',
+  },
+};
+
+// ============================================================
+// PHYSICS / ETPT EQUATIONS
+// ============================================================
+
+// Equation 2: ρ_c from Shannon channel capacity
+// C_v = cortical bandwidth required for generative model
+// SNR derived from forceLevels (each level adds ~1 bit if log-spaced)
+function computeRhoC(area, updateRate, forceLevels) {
+  const Cv = 1e5;                            // bits/s — cortical processing baseline
+  const bitsPerSample = Math.log2(forceLevels + 1);  // approximate
+  const denom = Math.max(area, 1) * updateRate * bitsPerSample;
+  return Cv / denom;
+}
+
+// Effective information density of the current configuration
+function computeRhoEff(density, updateRate, forceLevels) {
+  return density * updateRate * Math.log2(forceLevels + 1);
+}
+
+// Equation 1: cortical reassignment ODE (advance one time step)
+// dP/dt = β · (ρ - ρc)_+ · (Pmax - P) · f
+function advanceP(P, rhoEff, rhoC, f, dt_hours) {
+  // dt in hours; convert to consistent units
+  const excess = Math.max(rhoEff - rhoC, 0);
+  // Empirical scaling so that congenital blind at 3× threshold saturates ~30 hr
+  const dPdt = state.beta * excess * (state.PMax - P) * f;
+  return P + dPdt * dt_hours * 3600; // convert hours → seconds since beta is in /s
+}
+
+// Perceptual quality metric Q
+function computeQuality(rhoEff, rhoC, P, f) {
+  if (rhoEff <= 0) return 0;
+  const thresholdProx = 1 / (1 + Math.exp(-3 * (rhoEff - rhoC) / rhoC));
+  return thresholdProx * P * f;
+}
+
+// ============================================================
+// ENVIRONMENT (top-down room)
+// ============================================================
+function initEnvironment() {
+  // Static obstacle layout — interesting spatial structure
+  state.obstacles = [
+    // walls (room boundary)
+    { type: 'rect', x: 40, y: 40, w: 520, h: 8 },     // top wall
+    { type: 'rect', x: 40, y: 272, w: 520, h: 8 },    // bottom wall
+    { type: 'rect', x: 40, y: 40, w: 8, h: 240 },     // left wall
+    { type: 'rect', x: 552, y: 40, w: 8, h: 240 },    // right wall
+    
+    // interior objects
+    { type: 'rect', x: 150, y: 100, w: 60, h: 20 },   // table 1
+    { type: 'rect', x: 380, y: 90, w: 40, h: 90 },    // shelf
+    { type: 'rect', x: 220, y: 200, w: 80, h: 30 },   // bench
+    { type: 'circle', x: 450, y: 220, r: 18 },        // column
+    { type: 'circle', x: 110, y: 220, r: 14 },        // small column
+  ];
+  state.subjectPos = { x: 300, y: 200 };
+  state.subjectAngle = -Math.PI / 2;
+}
+
+// Ray cast for depth sensing
+function castRay(originX, originY, angle, maxDist = 600) {
+  // Step along ray until we hit something
+  const step = 2;
+  let d = 0;
+  while (d < maxDist) {
+    const x = originX + Math.cos(angle) * d;
+    const y = originY + Math.sin(angle) * d;
+    for (const obs of state.obstacles) {
+      if (obs.type === 'rect') {
+        if (x >= obs.x && x <= obs.x + obs.w && y >= obs.y && y <= obs.y + obs.h) return d;
+      } else if (obs.type === 'circle') {
+        const dx = x - obs.x, dy = y - obs.y;
+        if (dx*dx + dy*dy < obs.r * obs.r) return d;
+      }
+    }
+    d += step;
+  }
+  return maxDist;
+}
+
+function castAllRays() {
+  state.rayDistances = [];
+  const arc = Math.PI * 2/3; // 120° forward arc
+  const baseAngle = state.subjectAngle - arc/2;
+  for (let i = 0; i < state.rayCount; i++) {
+    const a = baseAngle + (i / (state.rayCount - 1)) * arc;
+    const dist = castRay(state.subjectPos.x, state.subjectPos.y, a);
+    state.rayDistances.push(dist);
+  }
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function getCanvas(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  // Handle hi-DPI
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  if (canvas.width !== Math.floor(rect.width * dpr)) {
+    canvas.width = Math.floor(rect.width * dpr);
+    canvas.height = Math.floor(parseInt(canvas.getAttribute('height')) * dpr);
+    ctx.scale(dpr, dpr);
+  }
+  return { canvas, ctx, w: rect.width, h: parseInt(canvas.getAttribute('height')) };
+}
+
+function drawEnvironment() {
+  const { ctx, w, h } = getCanvas('env');
+  
+  // Clear
+  ctx.fillStyle = '#06080a';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Grid
+  ctx.strokeStyle = '#1a1f25';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 30) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0); ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  for (let y = 0; y < h; y += 30) {
+    ctx.beginPath();
+    ctx.moveTo(0, y); ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  
+  // Obstacles
+  ctx.fillStyle = '#2a3340';
+  ctx.strokeStyle = '#3a4452';
+  ctx.lineWidth = 1;
+  for (const obs of state.obstacles) {
+    if (obs.type === 'rect') {
+      ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+      ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
+    } else if (obs.type === 'circle') {
+      ctx.beginPath();
+      ctx.arc(obs.x, obs.y, obs.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  
+  // Rays — color by distance
+  for (let i = 0; i < state.rayDistances.length; i++) {
+    const a = state.subjectAngle - (Math.PI/3) + (i / (state.rayCount - 1)) * (Math.PI * 2/3);
+    const d = state.rayDistances[i];
+    const norm = Math.min(d / 300, 1);
+    // closer = brighter amber, farther = fading
+    const alpha = (1 - norm) * 0.6 + 0.05;
+    ctx.strokeStyle = `rgba(232, 168, 87, ${alpha})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(state.subjectPos.x, state.subjectPos.y);
+    ctx.lineTo(state.subjectPos.x + Math.cos(a) * d, state.subjectPos.y + Math.sin(a) * d);
+    ctx.stroke();
+  }
+  
+  // Subject
+  ctx.fillStyle = '#4dd0e1';
+  ctx.beginPath();
+  ctx.arc(state.subjectPos.x, state.subjectPos.y, 8, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Subject facing direction indicator
+  ctx.strokeStyle = '#80e8f5';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(state.subjectPos.x, state.subjectPos.y);
+  ctx.lineTo(state.subjectPos.x + Math.cos(state.subjectAngle) * 18, 
+             state.subjectPos.y + Math.sin(state.subjectAngle) * 18);
+  ctx.stroke();
+  
+  // Coordinate hint
+  ctx.fillStyle = '#4d4a44';
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillText(`subject (${Math.round(state.subjectPos.x)}, ${Math.round(state.subjectPos.y)})  ·  ${state.rayCount} rays  ·  120° arc`, 8, h - 6);
+}
+
+function drawSensor() {
+  const { ctx, w, h } = getCanvas('sensor');
+  
+  ctx.fillStyle = '#06080a';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Render each ray as a vertical band (depth = brightness)
+  const bandW = w / state.rayCount;
+  for (let i = 0; i < state.rayCount; i++) {
+    const d = state.rayDistances[i];
+    const norm = Math.min(d / 300, 1);
+    const brightness = (1 - norm);   // 1 = close (bright), 0 = far (dark)
+    // amber gradient
+    const r = Math.floor(232 * brightness);
+    const g = Math.floor(168 * brightness);
+    const b = Math.floor(87 * brightness * 0.6);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(i * bandW, 0, bandW + 1, h - 24);
+  }
+  
+  // Axis labels
+  ctx.fillStyle = '#4d4a44';
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillText('left  ←', 4, h - 8);
+  ctx.fillText('forward', w/2 - 20, h - 8);
+  ctx.fillText('→  right', w - 50, h - 8);
+}
+
+// Haptic array — render the body location with cells at chosen density
+function drawHaptic() {
+  const { ctx, w, h } = getCanvas('haptic');
+  
+  ctx.fillStyle = '#06080a';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Body diagram dimensions based on location
+  const bodyDims = {
+    'back':    { aspect: 0.6,  label: 'back  ·  ~1500 cm² area available' },
+    'forearm': { aspect: 0.25, label: 'forearm  ·  ~200 cm² area available' },
+    'palm':    { aspect: 0.7,  label: 'palm  ·  ~70 cm² area available' },
+    'tongue':  { aspect: 0.5,  label: 'tongue  ·  ~25 cm² area available' },
+    'wrist':   { aspect: 0.2,  label: 'wrist band  ·  ~30 cm² area available' },
+  };
+  const dim = bodyDims[state.location] || bodyDims.back;
+  
+  const margin = 30;
+  const maxW = w - margin*2;
+  const maxH = h - 50;
+  let bodyW, bodyH;
+  if (dim.aspect > maxW/maxH) {
+    bodyW = maxW;
+    bodyH = bodyW * (1/dim.aspect);
+  } else {
+    bodyH = maxH;
+    bodyW = bodyH * dim.aspect;
+  }
+  const bx = (w - bodyW)/2;
+  const by = 12;
+  
+  // Body outline
+  ctx.strokeStyle = '#2a3340';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bodyW, bodyH, 12);
+  ctx.stroke();
+  
+  // Determine effective cell count on the body
+  // (clamp to area constraint of body location)
+  const actualArea = ({back:1500,forearm:200,palm:70,tongue:25,wrist:30})[state.location];
+  const usableArea = Math.min(state.area, actualArea);
+  const totalCells = Math.round(usableArea * state.density);
+  
+  // Lay out cells in a grid that matches the body proportions
+  const cellAspect = dim.aspect;
+  let cellsX = Math.round(Math.sqrt(totalCells * cellAspect / 1));
+  let cellsY = Math.round(totalCells / cellsX);
+  // Cap for rendering performance — sample if too many
+  const renderCellsX = Math.min(cellsX, 80);
+  const renderCellsY = Math.min(cellsY, 30);
+  const sampleStrideX = cellsX / renderCellsX;
+  const sampleStrideY = cellsY / renderCellsY;
+  
+  const cellW = bodyW / renderCellsX;
+  const cellH = bodyH / renderCellsY;
+  
+  // For each rendered cell, sample a ray distance
+  // Map the depth sensor (1D arc) to the 2D body via flattened raster
+  for (let cy = 0; cy < renderCellsY; cy++) {
+    for (let cx = 0; cx < renderCellsX; cx++) {
+      // Mapping: horizontal cells = horizontal sensor position
+      // Vertical = sub-bands (additional vertical resolution comes from interpolation)
+      const rayIdx = Math.floor((cx / renderCellsX) * state.rayDistances.length);
+      const d = state.rayDistances[rayIdx] || 300;
+      const norm = Math.min(d / 300, 1);
+      let intensity = (1 - norm);
+      
+      // Subthreshold devices show noise, not signal
+      if (state.rhoEff < state.rhoC * 0.5) {
+        // Add significant random noise — what user actually feels
+        intensity = intensity * 0.3 + (Math.random() - 0.5) * 0.4;
+        intensity = Math.max(0, Math.min(1, intensity));
+      }
+      
+      // Modulate by quality — at low Q, render is degraded
+      const Q = state.quality;
+      const renderIntensity = intensity * (0.3 + 0.7 * Q);
+      
+      // Color: cyan for above-threshold (spatial percept), amber/dim for below
+      let r, g, b;
+      if (state.rhoEff > state.rhoC && state.P > 0.5) {
+        // Cyan — spatial percept achieved
+        r = Math.floor(80 * renderIntensity);
+        g = Math.floor(208 * renderIntensity);
+        b = Math.floor(225 * renderIntensity);
+      } else if (state.rhoEff > state.rhoC) {
+        // Amber — sufficient density, but training not yet sufficient
+        r = Math.floor(232 * renderIntensity);
+        g = Math.floor(168 * renderIntensity);
+        b = Math.floor(87 * renderIntensity);
+      } else {
+        // Dim amber/gray — subthreshold; user feels buzz, not spatial
+        r = Math.floor(120 * renderIntensity);
+        g = Math.floor(100 * renderIntensity);
+        b = Math.floor(80 * renderIntensity);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(bx + cx * cellW, by + cy * cellH, Math.ceil(cellW), Math.ceil(cellH));
+    }
+  }
+  
+  // Body outline on top
+  ctx.strokeStyle = '#3a4452';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bodyW, bodyH, 12);
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = '#8a8579';
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillText(dim.label, 8, h - 22);
+  
+  ctx.fillStyle = '#4d4a44';
+  ctx.fillText(`${totalCells.toLocaleString()} total nodes  ·  ${renderCellsX}×${renderCellsY} rendered (sampled)  ·  area ${usableArea.toFixed(0)} cm²`, 8, h - 8);
+}
+
+// B and P vectors for matrix rotation visualization
+const B_HUMAN = [0.95, 0.90, 0.40, 0.25, 0.98, 0.85, 0.00, 0.10, 0.30];
+const P_SIGHTED = [0.0004, 0.33, 0.067, 0.85, 0.01, 0.05, 0.30, 0.00];
+const P_BLIND   = [0.00, 0.00, 0.10, 0.95, 0.02, 0.07, 0.32, 0.00];
+
+const B_LABELS = ['manl', 'bipd', 'vocl', 'strg', 'finm', 'grip', 'aero', 'aqua', 'coll'];
+const P_LABELS = ['visEM', 'FOV', 'acst', 'tact', 'magn', 'olfc', 'baro', 'elec'];
+
+function renderMatrix(canvasId, B, P, highlightZeroed) {
+  const { ctx, w, h } = getCanvas(canvasId);
+  ctx.fillStyle = '#06080a';
+  ctx.fillRect(0, 0, w, h);
+  
+  const padL = 38, padR = 6, padT = 22, padB = 6;
+  const cellW = (w - padL - padR) / P.length;
+  const cellH = (h - padT - padB) / B.length;
+  
+  // P labels (columns) on top
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'center';
+  for (let j = 0; j < P.length; j++) {
+    const isVisualCol = (j === 0 || j === 1);
+    if (highlightZeroed && isVisualCol) {
+      ctx.fillStyle = 'rgba(217, 101, 101, 0.8)';
+    } else if (j === 3) {
+      ctx.fillStyle = 'rgba(77, 208, 225, 0.9)';
+    } else {
+      ctx.fillStyle = '#8a8579';
+    }
+    ctx.fillText(P_LABELS[j], padL + cellW * (j + 0.5), padT - 6);
+  }
+  
+  // B labels (rows) on left
+  ctx.textAlign = 'right';
+  for (let i = 0; i < B.length; i++) {
+    ctx.fillStyle = '#8a8579';
+    ctx.fillText(B_LABELS[i], padL - 4, padT + cellH * (i + 0.5) + 3);
+  }
+  
+  // Cells
+  let maxVal = 0;
+  for (let i = 0; i < B.length; i++) {
+    for (let j = 0; j < P.length; j++) {
+      maxVal = Math.max(maxVal, B[i] * P[j]);
+    }
+  }
+  
+  for (let i = 0; i < B.length; i++) {
+    for (let j = 0; j < P.length; j++) {
+      const v = B[i] * P[j];
+      const norm = maxVal > 0 ? v / maxVal : 0;
+      // Colormap: dark to amber to cyan for top values
+      let r, g, b;
+      if (j === 3 && v > 0.5) {
+        // Dominant tactile column highlighted in cyan
+        r = Math.floor(20 + 60 * norm);
+        g = Math.floor(40 + 168 * norm);
+        b = Math.floor(60 + 165 * norm);
+      } else if (highlightZeroed && (j === 0 || j === 1)) {
+        // Zeroed visual columns shown as deep gray-red
+        const dim = norm * 0.3;
+        r = Math.floor(60 * (1 - dim) + 80 * dim);
+        g = Math.floor(20 * (1 - dim) + 30 * dim);
+        b = Math.floor(20 * (1 - dim) + 30 * dim);
+      } else {
+        // Standard amber colormap
+        r = Math.floor(20 + 212 * norm);
+        g = Math.floor(15 + 153 * norm);
+        b = Math.floor(10 + 77 * norm);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(padL + j * cellW, padT + i * cellH, Math.ceil(cellW), Math.ceil(cellH));
+      
+      // Cell border
+      ctx.strokeStyle = '#0b0d10';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(padL + j * cellW, padT + i * cellH, cellW, cellH);
+    }
+  }
+}
+
+function drawMatrices() {
+  renderMatrix('matrix-sighted', B_HUMAN, P_SIGHTED, false);
+  renderMatrix('matrix-blind', B_HUMAN, P_BLIND, true);
+}
+
+function updatePhenomStages() {
+  // Determine current stage based on rho_eff vs rho_c and P value
+  const stages = [
+    document.getElementById('phenom-1'),
+    document.getElementById('phenom-2'),
+    document.getElementById('phenom-3'),
+    document.getElementById('phenom-4'),
+  ];
+  stages.forEach(s => s.classList.remove('current', 'success'));
+  
+  let activeStage;
+  const aboveT = state.rhoEff > state.rhoC;
+  const f = state.fByPop[state.subject];
+  
+  if (!aboveT) {
+    activeStage = 0;  // subthreshold
+  } else if (state.P < 0.45) {
+    activeStage = 1;  // threshold crossing
+  } else if (state.P < 0.80) {
+    activeStage = 2;  // spatial emergence
+  } else {
+    activeStage = 3;  // the new sense
+  }
+  
+  stages[activeStage].classList.add('current');
+  if (activeStage >= 2 && f > 0.3) {
+    stages[activeStage].classList.add('success');
+  }
+}
+
+// Dynamics graph — P(t) trajectory
+function drawDynamics() {
+  const { ctx, w, h } = getCanvas('dynamics');
+  
+  ctx.fillStyle = '#06080a';
+  ctx.fillRect(0, 0, w, h);
+  
+  const padL = 50, padR = 20, padT = 20, padB = 30;
+  const gw = w - padL - padR;
+  const gh = h - padT - padB;
+  
+  // Grid lines
+  ctx.strokeStyle = '#1a1f25';
+  ctx.lineWidth = 1;
+  // horizontal
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (i/4) * gh;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL+gw, y); ctx.stroke();
+  }
+  // vertical (time axis)
+  for (let i = 0; i <= 10; i++) {
+    const x = padL + (i/10) * gw;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT+gh); ctx.stroke();
+  }
+  
+  // Axis
+  ctx.strokeStyle = '#2a3340';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT+gh); ctx.lineTo(padL+gw, padT+gh);
+  ctx.stroke();
+  
+  // Y labels
+  ctx.fillStyle = '#8a8579';
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'right';
+  ctx.fillText('1.0', padL - 6, padT + 4);
+  ctx.fillText('0.75', padL - 6, padT + gh*0.25 + 4);
+  ctx.fillText('0.5', padL - 6, padT + gh*0.5 + 4);
+  ctx.fillText('0.25', padL - 6, padT + gh*0.75 + 4);
+  ctx.fillText('0', padL - 6, padT + gh + 4);
+  
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#4d4a44';
+  ctx.fillText('P(t)', 6, padT + 12);
+  
+  // X labels
+  ctx.textAlign = 'center';
+  const tMax = 200;
+  for (let i = 0; i <= 10; i++) {
+    ctx.fillStyle = '#8a8579';
+    ctx.fillText(`${(i * tMax / 10).toFixed(0)}h`, padL + (i/10)*gw, padT + gh + 16);
+  }
+  ctx.fillStyle = '#4d4a44';
+  ctx.textAlign = 'right';
+  ctx.fillText('training time →', padL + gw, padT + gh + 28);
+  
+  // Plot the THEORETICAL trajectory at current config
+  // Run Eq 1 forward for 0-200 hours
+  ctx.strokeStyle = (state.rhoEff > state.rhoC) ? '#4dd0e1' : '#d96565';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  const dt = 0.5;  // hours per step
+  let P = state.P0;
+  const f = state.fByPop[state.subject];
+  for (let t = 0; t <= tMax; t += dt) {
+    const px = padL + (t/tMax) * gw;
+    const py = padT + (1 - P) * gh;
+    if (t === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    P = advanceP(P, state.rhoEff, state.rhoC, f, dt);
+  }
+  ctx.stroke();
+  
+  // Mark current time position
+  const curX = padL + (state.trainingTime/tMax) * gw;
+  const curY = padT + (1 - state.P) * gh;
+  ctx.fillStyle = '#e8a857';
+  ctx.beginPath();
+  ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#e8a857';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(curX, padT); ctx.lineTo(curX, padT+gh);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Show threshold reference line at P=0.5 ("perception emerges")
+  ctx.strokeStyle = 'rgba(125, 200, 255, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 6]);
+  ctx.beginPath();
+  ctx.moveTo(padL, padT + gh * 0.5);
+  ctx.lineTo(padL + gw, padT + gh * 0.5);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(125, 200, 255, 0.5)';
+  ctx.fillText('perception emerges (P > 0.5)', padL + gw - 6, padT + gh * 0.5 - 4);
+  
+  // Annotation: above or below threshold
+  ctx.textAlign = 'left';
+  if (state.rhoEff > state.rhoC) {
+    ctx.fillStyle = '#4dd0e1';
+    ctx.font = '11px JetBrains Mono';
+    ctx.fillText(`ρ_eff > ρ_c by ${((state.rhoEff/state.rhoC) || 0).toFixed(1)}×  ·  recruitment proceeds`, padL + 8, padT + 16);
+  } else {
+    ctx.fillStyle = '#d96565';
+    ctx.font = '11px JetBrains Mono';
+    ctx.fillText(`ρ_eff < ρ_c  ·  subthreshold lock  ·  P stays at baseline forever`, padL + 8, padT + 16);
+  }
+}
+
+// ============================================================
+// UI UPDATES
+// ============================================================
+function updateStatusDisplay() {
+  document.getElementById('val-rho').textContent = formatNumber(state.rhoEff);
+  document.getElementById('val-rhoc').textContent = formatNumber(state.rhoC);
+  document.getElementById('val-p').textContent = state.P.toFixed(3);
+  document.getElementById('val-q').textContent = (state.quality * 100).toFixed(1);
+  
+  // Apply visual states
+  const rhoCell = document.getElementById('status-rho');
+  rhoCell.classList.remove('success', 'failure', 'active');
+  if (state.rhoEff > state.rhoC * 2) rhoCell.classList.add('success');
+  else if (state.rhoEff > state.rhoC * 0.8) rhoCell.classList.add('active');
+  else rhoCell.classList.add('failure');
+  
+  document.getElementById('note-rho').textContent = state.rhoEff > state.rhoC 
+    ? `above threshold by ${(state.rhoEff/state.rhoC).toFixed(2)}×`
+    : `below threshold by ${(state.rhoC/state.rhoEff).toFixed(2)}×`;
+  
+  const pCell = document.getElementById('status-p');
+  pCell.classList.remove('success', 'failure', 'active');
+  if (state.P > 0.7) pCell.classList.add('success');
+  else if (state.P > 0.4) pCell.classList.add('active');
+  
+  const qCell = document.getElementById('status-q');
+  qCell.classList.remove('success', 'failure', 'active');
+  if (state.quality > 0.5) qCell.classList.add('success');
+  else if (state.quality > 0.2) qCell.classList.add('active');
+  else if (state.rhoEff < state.rhoC) qCell.classList.add('failure');
+  
+  // Verdict
+  updateVerdict();
+  
+  // Update labels for sliders
+  document.getElementById('lbl-density').textContent = state.density.toFixed(state.density < 1 ? 2 : 0);
+  document.getElementById('lbl-update').textContent = state.updateRate;
+  document.getElementById('lbl-levels').textContent = state.forceLevels;
+  document.getElementById('lbl-area').textContent = state.area;
+  document.getElementById('lbl-time').textContent = state.trainingTime.toFixed(1);
+}
+
+function formatNumber(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(2) + 'k';
+  if (n >= 1) return n.toFixed(1);
+  return n.toFixed(3);
+}
+
+function updateVerdict() {
+  const ind = document.getElementById('verdict-indicator');
+  const txt = document.getElementById('verdict-text');
+  ind.classList.remove('success', 'active', 'failure');
+  
+  const aboveT = state.rhoEff > state.rhoC;
+  const fullyTrained = state.P > 0.75;
+  const f = state.fByPop[state.subject];
+  const popLabel = ({
+    congenital: 'congenitally blind',
+    early: 'early-blind',
+    late: 'late-blind',
+    sighted: 'sighted (blindfolded)'
+  })[state.subject];
+  
+  let message, klass;
+  if (aboveT && fullyTrained && f > 0.5) {
+    klass = 'success';
+    message = `<span class="strong">A new sense has emerged.</span> The ${popLabel} subject no longer reports the haptic field as sensation on their skin — they perceive the room itself, located <em>out there</em> in space. This is not vision restored. It is a perceptual category that did not previously exist in any human, one their cortex was uniquely ready to construct.`;
+  } else if (aboveT && f > 0.5) {
+    klass = 'active';
+    message = `<span class="strong">Above threshold — cortical recruitment in progress.</span> ρ_eff exceeds ρ_c by ${(state.rhoEff/state.rhoC).toFixed(1)}× and the ${popLabel} subject's visual cortex (≈30% of their cortical surface, plastic and available) is being recruited to process the haptic stream. P = ${state.P.toFixed(2)}. Continue training to consolidate the new percept.`;
+  } else if (aboveT && f < 0.3) {
+    klass = 'failure';
+    message = `<span class="strong">Above threshold but plasticity is insufficient.</span> A ${popLabel} subject has visual cortex already committed to vision — f ≈ ${f.toFixed(2)}. Even at high ρ, cortical recruitment is too slow for the new percept to consolidate within a reasonable training window. The framework predicts the strong target population: congenital and early-blind users, whose cortex has been waiting.`;
+  } else if (state.subject === 'sighted') {
+    klass = 'failure';
+    message = `<span class="strong">Subthreshold lock — and even if cleared, the cortex is occupied.</span> A sighted subject's visual cortex is performing vision; only ~5% of it is available for recruitment. The framework is sharp here: this technology is built for blind perception first, and only crosses to sighted populations once optimized.`;
+  } else {
+    klass = 'failure';
+    message = `<span class="strong">Subthreshold lock.</span> ρ_eff is ${(state.rhoEff/state.rhoC).toFixed(2)}× of ρ_c. Equation 1 forces dP/dt = 0. No amount of training advances the ${popLabel} subject's perception — they will report buzzing or alerting at best. This is the regime Neosensory Buzz, TVSS, and most consumer haptic wearables actually operate in. The framework predicts: increase ρ until threshold is crossed, then perception emerges.`;
+  }
+  
+  ind.classList.add(klass);
+  txt.innerHTML = message;
+}
+
+// ============================================================
+// SIMULATION LOOP
+// ============================================================
+function simulationStep() {
+  // Recompute physics
+  state.rhoEff = computeRhoEff(state.density, state.updateRate, state.forceLevels);
+  state.rhoC = computeRhoC(state.area, state.updateRate, state.forceLevels);
+  
+  // Compute P at current trainingTime from scratch (deterministic given config)
+  // This avoids drift from interactive slider changes
+  let P = state.P0;
+  const f = state.fByPop[state.subject];
+  const dt = 0.5;
+  for (let t = 0; t < state.trainingTime; t += dt) {
+    P = advanceP(P, state.rhoEff, state.rhoC, f, dt);
+    if (P > 0.999) { P = 0.999; break; }
+  }
+  state.P = P;
+  state.quality = computeQuality(state.rhoEff, state.rhoC, state.P, f);
+  
+  // Update view
+  castAllRays();
+  drawEnvironment();
+  drawSensor();
+  drawHaptic();
+  drawDynamics();
+  drawMatrices();
+  updatePhenomStages();
+  updateStatusDisplay();
+}
+
+function animationLoop() {
+  const now = performance.now();
+  const dt = (now - state.lastFrameTime) / 1000;
+  state.lastFrameTime = now;
+  
+  if (state.autoAdvancing) {
+    state.trainingTime = Math.min(200, state.trainingTime + dt * 8); // 8 hours per real second
+    document.getElementById('ctl-time').value = state.trainingTime;
+    simulationStep();
+    if (state.trainingTime >= 200) state.autoAdvancing = false;
+  }
+  
+  // Subtle environmental movement — auto-rotate the subject slowly when idle
+  if (!state.userInteracting) {
+    state.subjectAngle += dt * 0.15;
+    castAllRays();
+    drawEnvironment();
+    drawSensor();
+    drawHaptic();
+  }
+  
+  requestAnimationFrame(animationLoop);
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+function bindControls() {
+  document.getElementById('ctl-density').addEventListener('input', e => {
+    state.density = parseFloat(e.target.value);
+    simulationStep();
+  });
+  document.getElementById('ctl-update').addEventListener('input', e => {
+    state.updateRate = parseFloat(e.target.value);
+    simulationStep();
+  });
+  document.getElementById('ctl-levels').addEventListener('input', e => {
+    state.forceLevels = parseInt(e.target.value);
+    simulationStep();
+  });
+  document.getElementById('ctl-area').addEventListener('input', e => {
+    state.area = parseFloat(e.target.value);
+    simulationStep();
+  });
+  document.getElementById('ctl-time').addEventListener('input', e => {
+    state.trainingTime = parseFloat(e.target.value);
+    simulationStep();
+  });
+  document.getElementById('ctl-subject').addEventListener('change', e => {
+    state.subject = e.target.value;
+    simulationStep();
+  });
+  document.getElementById('ctl-location').addEventListener('change', e => {
+    state.location = e.target.value;
+    simulationStep();
+  });
+  
+  // Preset buttons
+  document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const p = PRESETS[btn.dataset.preset];
+      state.density = p.density;
+      state.updateRate = p.updateRate;
+      state.forceLevels = p.forceLevels;
+      state.area = p.area;
+      state.location = p.location;
+      state.trainingTime = 0;
+      
+      document.getElementById('ctl-density').value = p.density;
+      document.getElementById('ctl-update').value = p.updateRate;
+      document.getElementById('ctl-levels').value = p.forceLevels;
+      document.getElementById('ctl-area').value = p.area;
+      document.getElementById('ctl-time').value = 0;
+      document.getElementById('ctl-location').value = p.location;
+      
+      simulationStep();
+    });
+  });
+  
+  // Keyboard shortcuts
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      state.autoAdvancing = !state.autoAdvancing;
+    }
+    if (e.code === 'KeyR') {
+      state.trainingTime = 0;
+      document.getElementById('ctl-time').value = 0;
+      simulationStep();
+    }
+    if (e.code === 'ArrowLeft') state.subjectAngle -= 0.1;
+    if (e.code === 'ArrowRight') state.subjectAngle += 0.1;
+    if (e.code === 'ArrowUp') {
+      const dx = Math.cos(state.subjectAngle) * 8;
+      const dy = Math.sin(state.subjectAngle) * 8;
+      state.subjectPos.x = Math.max(60, Math.min(540, state.subjectPos.x + dx));
+      state.subjectPos.y = Math.max(60, Math.min(260, state.subjectPos.y + dy));
+    }
+    if (e.code === 'ArrowDown') {
+      const dx = Math.cos(state.subjectAngle) * 8;
+      const dy = Math.sin(state.subjectAngle) * 8;
+      state.subjectPos.x = Math.max(60, Math.min(540, state.subjectPos.x - dx));
+      state.subjectPos.y = Math.max(60, Math.min(260, state.subjectPos.y - dy));
+    }
+  });
+  
+  // Mouse on environment
+  const envCanvas = document.getElementById('env');
+  let isDragging = false;
+  envCanvas.addEventListener('mousedown', e => {
+    isDragging = true;
+    state.userInteracting = true;
+  });
+  envCanvas.addEventListener('mouseup', () => {
+    isDragging = false;
+    setTimeout(() => { state.userInteracting = false; }, 2000);
+  });
+  envCanvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+  });
+  envCanvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const rect = envCanvas.getBoundingClientRect();
+    const scaleX = 600 / rect.width;
+    const scaleY = 320 / rect.height;
+    state.subjectPos.x = Math.max(60, Math.min(540, (e.clientX - rect.left) * scaleX));
+    state.subjectPos.y = Math.max(60, Math.min(260, (e.clientY - rect.top) * scaleY));
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  initEnvironment();
+  bindControls();
+  // Apply initial state
+  state.density = 300;
+  state.updateRate = 200;
+  state.forceLevels = 16;
+  state.area = 1500;
+  state.subject = 'congenital';
+  state.location = 'back';
+  state.trainingTime = 0;
+  simulationStep();
+  animationLoop();
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
